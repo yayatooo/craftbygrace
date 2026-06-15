@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as mainPathlessRouteRouteImport } from './routes/(main)/_pathless/route'
 import { Route as mainPathlessIndexRouteImport } from './routes/(main)/_pathless/index'
 import { Route as mainPathlessBlogRouteImport } from './routes/(main)/_pathless/blog'
 import { Route as mainPathlessArchivesRouteImport } from './routes/(main)/_pathless/archives'
 import { Route as mainPathlessAboutRouteImport } from './routes/(main)/_pathless/about'
 
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/(auth)/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const mainPathlessRouteRoute = mainPathlessRouteRouteImport.update({
   id: '/(main)/_pathless',
   getParentRoute: () => rootRouteImport,
@@ -41,12 +47,14 @@ const mainPathlessAboutRoute = mainPathlessAboutRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
   '/blog': typeof mainPathlessBlogRoute
   '/': typeof mainPathlessIndexRoute
 }
 export interface FileRoutesByTo {
+  '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
   '/blog': typeof mainPathlessBlogRoute
@@ -55,6 +63,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(main)/_pathless': typeof mainPathlessRouteRouteWithChildren
+  '/(auth)/login': typeof authLoginRoute
   '/(main)/_pathless/about': typeof mainPathlessAboutRoute
   '/(main)/_pathless/archives': typeof mainPathlessArchivesRoute
   '/(main)/_pathless/blog': typeof mainPathlessBlogRoute
@@ -62,12 +71,13 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/about' | '/archives' | '/blog' | '/'
+  fullPaths: '/login' | '/about' | '/archives' | '/blog' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/about' | '/archives' | '/blog' | '/'
+  to: '/login' | '/about' | '/archives' | '/blog' | '/'
   id:
     | '__root__'
     | '/(main)/_pathless'
+    | '/(auth)/login'
     | '/(main)/_pathless/about'
     | '/(main)/_pathless/archives'
     | '/(main)/_pathless/blog'
@@ -76,10 +86,18 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   mainPathlessRouteRoute: typeof mainPathlessRouteRouteWithChildren
+  authLoginRoute: typeof authLoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(main)/_pathless': {
       id: '/(main)/_pathless'
       path: ''
@@ -137,6 +155,7 @@ const mainPathlessRouteRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   mainPathlessRouteRoute: mainPathlessRouteRouteWithChildren,
+  authLoginRoute: authLoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

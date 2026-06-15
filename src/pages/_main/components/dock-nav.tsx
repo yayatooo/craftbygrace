@@ -1,6 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { BriefcaseBusiness, HomeIcon, Notebook, User } from "lucide-react";
+import { motion } from "motion/react";
+import { useEffect, useRef } from "react";
 import { AnimatedThemeToggler } from "#/components/ui/animated-theme-toggler";
 import { buttonVariants } from "#/components/ui/button";
 import { Dock, DockIcon } from "#/components/ui/dock";
@@ -21,7 +23,7 @@ type NavItem = {
 
 const linkClassName = cn(
 	buttonVariants({ variant: "ghost", size: "icon" }),
-	"size-12 rounded-xl text-foreground hover:bg-accent hover:text-accent-foreground",
+	"relative size-12 overflow-hidden rounded-xl text-foreground hover:bg-transparent hover:text-foreground",
 );
 
 const navItems: NavItem[] = [
@@ -32,6 +34,22 @@ const navItems: NavItem[] = [
 ];
 
 export function DockNav() {
+	const { pathname } = useLocation();
+	const activeIndex = navItems.findIndex((item) => item.href === pathname);
+	const previousActiveIndexRef = useRef(activeIndex);
+	const panDirection =
+		activeIndex === previousActiveIndexRef.current
+			? 0
+			: activeIndex > previousActiveIndexRef.current
+				? 1
+				: -1;
+
+	useEffect(() => {
+		if (activeIndex >= 0) {
+			previousActiveIndexRef.current = activeIndex;
+		}
+	}, [activeIndex]);
+
 	return (
 		<nav
 			aria-label="Primary navigation"
@@ -42,8 +60,9 @@ export function DockNav() {
 					direction="middle"
 					className="mt-0 border-border bg-background/80 shadow-lg backdrop-blur-md"
 				>
-					{navItems.map((item) => {
+					{navItems.map((item, index) => {
 						const Icon = item.icon;
+						const isActive = activeIndex === index;
 
 						return (
 							<DockIcon key={item.href}>
@@ -52,9 +71,32 @@ export function DockNav() {
 										<Link
 											to={item.href}
 											aria-label={item.label}
-											className={linkClassName}
+											className={cn(
+												linkClassName,
+												isActive &&
+													"text-accent-foreground hover:text-accent-foreground",
+											)}
 										>
-											<Icon className="size-4" />
+											{isActive ? (
+												<motion.span
+													key={item.href}
+													className="absolute inset-0 rounded-xl bg-accent"
+													initial={{
+														x:
+															panDirection === 0
+																? "0%"
+																: panDirection > 0
+																	? "-100%"
+																	: "100%",
+													}}
+													animate={{ x: "0%" }}
+													transition={{
+														duration: 0.24,
+														ease: [0.22, 1, 0.36, 1],
+													}}
+												/>
+											) : null}
+											<Icon className="relative z-10 size-4" />
 										</Link>
 									</TooltipTrigger>
 
