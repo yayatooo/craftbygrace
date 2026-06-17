@@ -1,6 +1,5 @@
 @import '@fontsource-variable/plus-jakarta-sans/wght.css';
 
-
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 

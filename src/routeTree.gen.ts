@@ -10,8 +10,18 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
+import { Route as platformAdminRouteRouteImport } from './routes/(platform)/admin/route'
 import { Route as mainPathlessRouteRouteImport } from './routes/(main)/_pathless/route'
+import { Route as platformAdminIndexRouteImport } from './routes/(platform)/admin/index'
 import { Route as mainPathlessIndexRouteImport } from './routes/(main)/_pathless/index'
+import { Route as platformAdminSongsRouteImport } from './routes/(platform)/admin/songs'
+import { Route as platformAdminSettingsRouteImport } from './routes/(platform)/admin/settings'
+import { Route as platformAdminProjectsRouteImport } from './routes/(platform)/admin/projects'
+import { Route as platformAdminMoviesRouteImport } from './routes/(platform)/admin/movies'
+import { Route as platformAdminGalleryRouteImport } from './routes/(platform)/admin/gallery'
+import { Route as platformAdminExperiencesRouteImport } from './routes/(platform)/admin/experiences'
+import { Route as platformAdminDashboardRouteImport } from './routes/(platform)/admin/dashboard'
+import { Route as platformAdminBlogsRouteImport } from './routes/(platform)/admin/blogs'
 import { Route as mainPathlessBlogRouteImport } from './routes/(main)/_pathless/blog'
 import { Route as mainPathlessArchivesRouteImport } from './routes/(main)/_pathless/archives'
 import { Route as mainPathlessAboutRouteImport } from './routes/(main)/_pathless/about'
@@ -21,14 +31,65 @@ const authLoginRoute = authLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const platformAdminRouteRoute = platformAdminRouteRouteImport.update({
+  id: '/(platform)/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const mainPathlessRouteRoute = mainPathlessRouteRouteImport.update({
   id: '/(main)/_pathless',
   getParentRoute: () => rootRouteImport,
+} as any)
+const platformAdminIndexRoute = platformAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => platformAdminRouteRoute,
 } as any)
 const mainPathlessIndexRoute = mainPathlessIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => mainPathlessRouteRoute,
+} as any)
+const platformAdminSongsRoute = platformAdminSongsRouteImport.update({
+  id: '/songs',
+  path: '/songs',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
+const platformAdminSettingsRoute = platformAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
+const platformAdminProjectsRoute = platformAdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
+const platformAdminMoviesRoute = platformAdminMoviesRouteImport.update({
+  id: '/movies',
+  path: '/movies',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
+const platformAdminGalleryRoute = platformAdminGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
+const platformAdminExperiencesRoute =
+  platformAdminExperiencesRouteImport.update({
+    id: '/experiences',
+    path: '/experiences',
+    getParentRoute: () => platformAdminRouteRoute,
+  } as any)
+const platformAdminDashboardRoute = platformAdminDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
+const platformAdminBlogsRoute = platformAdminBlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
+  getParentRoute: () => platformAdminRouteRoute,
 } as any)
 const mainPathlessBlogRoute = mainPathlessBlogRouteImport.update({
   id: '/blog',
@@ -47,45 +108,114 @@ const mainPathlessAboutRoute = mainPathlessAboutRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/admin': typeof platformAdminRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
   '/blog': typeof mainPathlessBlogRoute
+  '/admin/blogs': typeof platformAdminBlogsRoute
+  '/admin/dashboard': typeof platformAdminDashboardRoute
+  '/admin/experiences': typeof platformAdminExperiencesRoute
+  '/admin/gallery': typeof platformAdminGalleryRoute
+  '/admin/movies': typeof platformAdminMoviesRoute
+  '/admin/projects': typeof platformAdminProjectsRoute
+  '/admin/settings': typeof platformAdminSettingsRoute
+  '/admin/songs': typeof platformAdminSongsRoute
   '/': typeof mainPathlessIndexRoute
+  '/admin/': typeof platformAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
   '/blog': typeof mainPathlessBlogRoute
+  '/admin/blogs': typeof platformAdminBlogsRoute
+  '/admin/dashboard': typeof platformAdminDashboardRoute
+  '/admin/experiences': typeof platformAdminExperiencesRoute
+  '/admin/gallery': typeof platformAdminGalleryRoute
+  '/admin/movies': typeof platformAdminMoviesRoute
+  '/admin/projects': typeof platformAdminProjectsRoute
+  '/admin/settings': typeof platformAdminSettingsRoute
+  '/admin/songs': typeof platformAdminSongsRoute
   '/': typeof mainPathlessIndexRoute
+  '/admin': typeof platformAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(main)/_pathless': typeof mainPathlessRouteRouteWithChildren
+  '/(platform)/admin': typeof platformAdminRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
   '/(main)/_pathless/about': typeof mainPathlessAboutRoute
   '/(main)/_pathless/archives': typeof mainPathlessArchivesRoute
   '/(main)/_pathless/blog': typeof mainPathlessBlogRoute
+  '/(platform)/admin/blogs': typeof platformAdminBlogsRoute
+  '/(platform)/admin/dashboard': typeof platformAdminDashboardRoute
+  '/(platform)/admin/experiences': typeof platformAdminExperiencesRoute
+  '/(platform)/admin/gallery': typeof platformAdminGalleryRoute
+  '/(platform)/admin/movies': typeof platformAdminMoviesRoute
+  '/(platform)/admin/projects': typeof platformAdminProjectsRoute
+  '/(platform)/admin/settings': typeof platformAdminSettingsRoute
+  '/(platform)/admin/songs': typeof platformAdminSongsRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
+  '/(platform)/admin/': typeof platformAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/login' | '/about' | '/archives' | '/blog' | '/'
+  fullPaths:
+    | '/admin'
+    | '/login'
+    | '/about'
+    | '/archives'
+    | '/blog'
+    | '/admin/blogs'
+    | '/admin/dashboard'
+    | '/admin/experiences'
+    | '/admin/gallery'
+    | '/admin/movies'
+    | '/admin/projects'
+    | '/admin/settings'
+    | '/admin/songs'
+    | '/'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/about' | '/archives' | '/blog' | '/'
+  to:
+    | '/login'
+    | '/about'
+    | '/archives'
+    | '/blog'
+    | '/admin/blogs'
+    | '/admin/dashboard'
+    | '/admin/experiences'
+    | '/admin/gallery'
+    | '/admin/movies'
+    | '/admin/projects'
+    | '/admin/settings'
+    | '/admin/songs'
+    | '/'
+    | '/admin'
   id:
     | '__root__'
     | '/(main)/_pathless'
+    | '/(platform)/admin'
     | '/(auth)/login'
     | '/(main)/_pathless/about'
     | '/(main)/_pathless/archives'
     | '/(main)/_pathless/blog'
+    | '/(platform)/admin/blogs'
+    | '/(platform)/admin/dashboard'
+    | '/(platform)/admin/experiences'
+    | '/(platform)/admin/gallery'
+    | '/(platform)/admin/movies'
+    | '/(platform)/admin/projects'
+    | '/(platform)/admin/settings'
+    | '/(platform)/admin/songs'
     | '/(main)/_pathless/'
+    | '/(platform)/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   mainPathlessRouteRoute: typeof mainPathlessRouteRouteWithChildren
+  platformAdminRouteRoute: typeof platformAdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
 }
 
@@ -98,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(platform)/admin': {
+      id: '/(platform)/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof platformAdminRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(main)/_pathless': {
       id: '/(main)/_pathless'
       path: ''
@@ -105,12 +242,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainPathlessRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(platform)/admin/': {
+      id: '/(platform)/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof platformAdminIndexRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
     '/(main)/_pathless/': {
       id: '/(main)/_pathless/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof mainPathlessIndexRouteImport
       parentRoute: typeof mainPathlessRouteRoute
+    }
+    '/(platform)/admin/songs': {
+      id: '/(platform)/admin/songs'
+      path: '/songs'
+      fullPath: '/admin/songs'
+      preLoaderRoute: typeof platformAdminSongsRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/settings': {
+      id: '/(platform)/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof platformAdminSettingsRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/projects': {
+      id: '/(platform)/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof platformAdminProjectsRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/movies': {
+      id: '/(platform)/admin/movies'
+      path: '/movies'
+      fullPath: '/admin/movies'
+      preLoaderRoute: typeof platformAdminMoviesRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/gallery': {
+      id: '/(platform)/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof platformAdminGalleryRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/experiences': {
+      id: '/(platform)/admin/experiences'
+      path: '/experiences'
+      fullPath: '/admin/experiences'
+      preLoaderRoute: typeof platformAdminExperiencesRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/dashboard': {
+      id: '/(platform)/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof platformAdminDashboardRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
+    '/(platform)/admin/blogs': {
+      id: '/(platform)/admin/blogs'
+      path: '/blogs'
+      fullPath: '/admin/blogs'
+      preLoaderRoute: typeof platformAdminBlogsRouteImport
+      parentRoute: typeof platformAdminRouteRoute
     }
     '/(main)/_pathless/blog': {
       id: '/(main)/_pathless/blog'
@@ -153,8 +353,36 @@ const mainPathlessRouteRouteChildren: mainPathlessRouteRouteChildren = {
 const mainPathlessRouteRouteWithChildren =
   mainPathlessRouteRoute._addFileChildren(mainPathlessRouteRouteChildren)
 
+interface platformAdminRouteRouteChildren {
+  platformAdminBlogsRoute: typeof platformAdminBlogsRoute
+  platformAdminDashboardRoute: typeof platformAdminDashboardRoute
+  platformAdminExperiencesRoute: typeof platformAdminExperiencesRoute
+  platformAdminGalleryRoute: typeof platformAdminGalleryRoute
+  platformAdminMoviesRoute: typeof platformAdminMoviesRoute
+  platformAdminProjectsRoute: typeof platformAdminProjectsRoute
+  platformAdminSettingsRoute: typeof platformAdminSettingsRoute
+  platformAdminSongsRoute: typeof platformAdminSongsRoute
+  platformAdminIndexRoute: typeof platformAdminIndexRoute
+}
+
+const platformAdminRouteRouteChildren: platformAdminRouteRouteChildren = {
+  platformAdminBlogsRoute: platformAdminBlogsRoute,
+  platformAdminDashboardRoute: platformAdminDashboardRoute,
+  platformAdminExperiencesRoute: platformAdminExperiencesRoute,
+  platformAdminGalleryRoute: platformAdminGalleryRoute,
+  platformAdminMoviesRoute: platformAdminMoviesRoute,
+  platformAdminProjectsRoute: platformAdminProjectsRoute,
+  platformAdminSettingsRoute: platformAdminSettingsRoute,
+  platformAdminSongsRoute: platformAdminSongsRoute,
+  platformAdminIndexRoute: platformAdminIndexRoute,
+}
+
+const platformAdminRouteRouteWithChildren =
+  platformAdminRouteRoute._addFileChildren(platformAdminRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   mainPathlessRouteRoute: mainPathlessRouteRouteWithChildren,
+  platformAdminRouteRoute: platformAdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
 }
 export const routeTree = rootRouteImport
