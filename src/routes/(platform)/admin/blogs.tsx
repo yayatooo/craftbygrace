@@ -1,9 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import BlogsAdmin from "#/pages/_platform/blogs";
+import { createFileRoute } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/(platform)/admin/blogs')({
+export const Route = createFileRoute("/(platform)/admin/blogs")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
-  return <div>Hello "/(platform)/_pathless/blogs"!</div>
+  return <BlogsAdmin />;
 }

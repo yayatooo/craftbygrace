@@ -38,6 +38,34 @@ export const blogContentTypeEnum = pgEnum("blog_content_type", [
   "mdx",
 ]);
 
+export const trackerTypeEnum = pgEnum("tracker_type", [
+  "screening",
+  "interview",
+  "rejected",
+  "signoff",
+  "accepted",
+  "draft",
+]);
+
+export const platformEnum = pgEnum("platform", [
+  "linkeidn",
+  "indeed",
+  "telegram",
+  "jobstreet",
+  "glints",
+  "jobsdb",
+  "facebook",
+  "threads",
+  "twitter/X",
+  "other",
+]);
+
+export const workTypeEnum = pgEnum("work_type", [
+  "On-site",
+  "Hybrid",
+  "Remote",
+]);
+
 // =============================
 // USERS
 // =============================
@@ -94,7 +122,6 @@ export const projects = pgTable(
 
     description: text("description").notNull(),
 
-    // Simpel untuk awal:
     // ["Next.js", "Drizzle", "PostgreSQL", "Tailwind"]
     techStack: jsonb("tech_stack").$type<string[]>().default([]).notNull(),
 
@@ -168,6 +195,7 @@ export const songs = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
 
     name: varchar("name", { length: 160 }).notNull(),
+    writer: varchar("writer", { length: 160 }).notNull(),
     image: text("image"),
     link: text("link").notNull(),
 
@@ -194,6 +222,7 @@ export const movies = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
 
     name: varchar("name", { length: 160 }).notNull(),
+    type: varchar("type", { length: 160 }).notNull(),
     image: text("image"),
     link: text("link"),
 
@@ -237,6 +266,31 @@ export const gallery = pgTable(
   },
   (table) => [index("gallery_active_idx").on(table.isActive)],
 );
+
+// =============================
+// JOB TRACKER
+// =============================
+
+export const jobTracker = pgTable("job_tracker", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: varchar("name", { length: 160 }).notNull(),
+  company: varchar("company", { length: 160 }).notNull(),
+  location: varchar("location", { length: 160 }).notNull(),
+  role: varchar("role", { length: 160 }).notNull(),
+  cv: varchar("cv"),
+  type: jobTypeEnum("type").notNull(),
+  platform: platformEnum("platform").notNull(),
+  workType: workTypeEnum("work_type").notNull(),
+  status: trackerTypeEnum("status").default("screening"),
+  remarks: text("remarks"),
+
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .defaultNow()
+    .notNull(),
+});
 
 // =============================
 // BLOG

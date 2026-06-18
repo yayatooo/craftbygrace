@@ -3,8 +3,8 @@ import {
   IconCamera,
   IconChartBar,
   IconDashboard,
-  IconDatabase,
   IconFileAi,
+  IconFileCv,
   IconFileDescription,
   IconFileWord,
   IconFolder,
@@ -13,7 +13,7 @@ import {
   IconMovie,
   IconMusic,
   IconPencil,
-  IconReport,
+  IconRocket,
   IconSettings,
 } from "@tabler/icons-react";
 
@@ -126,7 +126,7 @@ const data = {
   navSecondary: [
     {
       title: "Settings",
-      url: "#",
+      url: "/admin/settings",
       icon: IconSettings,
     },
     {
@@ -137,14 +137,14 @@ const data = {
   ],
   documents: [
     {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
+      name: "Job Tracker",
+      url: "/admin/job-tracker",
+      icon: IconRocket,
     },
     {
-      name: "Reports",
+      name: "Resume",
       url: "#",
-      icon: IconReport,
+      icon: IconFileCv,
     },
     {
       name: "Word Assistant",

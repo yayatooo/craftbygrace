@@ -18,6 +18,7 @@ import { Route as platformAdminSongsRouteImport } from './routes/(platform)/admi
 import { Route as platformAdminSettingsRouteImport } from './routes/(platform)/admin/settings'
 import { Route as platformAdminProjectsRouteImport } from './routes/(platform)/admin/projects'
 import { Route as platformAdminMoviesRouteImport } from './routes/(platform)/admin/movies'
+import { Route as platformAdminJobTrackerRouteImport } from './routes/(platform)/admin/job-tracker'
 import { Route as platformAdminGalleryRouteImport } from './routes/(platform)/admin/gallery'
 import { Route as platformAdminExperiencesRouteImport } from './routes/(platform)/admin/experiences'
 import { Route as platformAdminDashboardRouteImport } from './routes/(platform)/admin/dashboard'
@@ -70,6 +71,11 @@ const platformAdminMoviesRoute = platformAdminMoviesRouteImport.update({
   path: '/movies',
   getParentRoute: () => platformAdminRouteRoute,
 } as any)
+const platformAdminJobTrackerRoute = platformAdminJobTrackerRouteImport.update({
+  id: '/job-tracker',
+  path: '/job-tracker',
+  getParentRoute: () => platformAdminRouteRoute,
+} as any)
 const platformAdminGalleryRoute = platformAdminGalleryRouteImport.update({
   id: '/gallery',
   path: '/gallery',
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
   '/admin/gallery': typeof platformAdminGalleryRoute
+  '/admin/job-tracker': typeof platformAdminJobTrackerRoute
   '/admin/movies': typeof platformAdminMoviesRoute
   '/admin/projects': typeof platformAdminProjectsRoute
   '/admin/settings': typeof platformAdminSettingsRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
   '/admin/gallery': typeof platformAdminGalleryRoute
+  '/admin/job-tracker': typeof platformAdminJobTrackerRoute
   '/admin/movies': typeof platformAdminMoviesRoute
   '/admin/projects': typeof platformAdminProjectsRoute
   '/admin/settings': typeof platformAdminSettingsRoute
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/(platform)/admin/dashboard': typeof platformAdminDashboardRoute
   '/(platform)/admin/experiences': typeof platformAdminExperiencesRoute
   '/(platform)/admin/gallery': typeof platformAdminGalleryRoute
+  '/(platform)/admin/job-tracker': typeof platformAdminJobTrackerRoute
   '/(platform)/admin/movies': typeof platformAdminMoviesRoute
   '/(platform)/admin/projects': typeof platformAdminProjectsRoute
   '/(platform)/admin/settings': typeof platformAdminSettingsRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/experiences'
     | '/admin/gallery'
+    | '/admin/job-tracker'
     | '/admin/movies'
     | '/admin/projects'
     | '/admin/settings'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/experiences'
     | '/admin/gallery'
+    | '/admin/job-tracker'
     | '/admin/movies'
     | '/admin/projects'
     | '/admin/settings'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/(platform)/admin/dashboard'
     | '/(platform)/admin/experiences'
     | '/(platform)/admin/gallery'
+    | '/(platform)/admin/job-tracker'
     | '/(platform)/admin/movies'
     | '/(platform)/admin/projects'
     | '/(platform)/admin/settings'
@@ -284,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof platformAdminMoviesRouteImport
       parentRoute: typeof platformAdminRouteRoute
     }
+    '/(platform)/admin/job-tracker': {
+      id: '/(platform)/admin/job-tracker'
+      path: '/job-tracker'
+      fullPath: '/admin/job-tracker'
+      preLoaderRoute: typeof platformAdminJobTrackerRouteImport
+      parentRoute: typeof platformAdminRouteRoute
+    }
     '/(platform)/admin/gallery': {
       id: '/(platform)/admin/gallery'
       path: '/gallery'
@@ -358,6 +377,7 @@ interface platformAdminRouteRouteChildren {
   platformAdminDashboardRoute: typeof platformAdminDashboardRoute
   platformAdminExperiencesRoute: typeof platformAdminExperiencesRoute
   platformAdminGalleryRoute: typeof platformAdminGalleryRoute
+  platformAdminJobTrackerRoute: typeof platformAdminJobTrackerRoute
   platformAdminMoviesRoute: typeof platformAdminMoviesRoute
   platformAdminProjectsRoute: typeof platformAdminProjectsRoute
   platformAdminSettingsRoute: typeof platformAdminSettingsRoute
@@ -370,6 +390,7 @@ const platformAdminRouteRouteChildren: platformAdminRouteRouteChildren = {
   platformAdminDashboardRoute: platformAdminDashboardRoute,
   platformAdminExperiencesRoute: platformAdminExperiencesRoute,
   platformAdminGalleryRoute: platformAdminGalleryRoute,
+  platformAdminJobTrackerRoute: platformAdminJobTrackerRoute,
   platformAdminMoviesRoute: platformAdminMoviesRoute,
   platformAdminProjectsRoute: platformAdminProjectsRoute,
   platformAdminSettingsRoute: platformAdminSettingsRoute,
