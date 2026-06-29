@@ -1,28 +1,28 @@
 import { TitleText } from "#/components/title-text";
-import { GalleryTable } from "../components/gallery-table";
-import { UploadGalleryCard } from "../components/gallery-upload-card";
+import { GalleryTable } from "./gallery-table";
+import { UploadGalleryCard } from "./gallery-upload-card";
 
-export default function GalleryAdmin() {
-  const galleryData = [
-    {
-      id: "1",
-      name: "Workspace setup",
-      image: "/placeholder-gallery.jpg",
-      isActive: true,
-    },
-    {
-      id: "2",
-      name: "Coffee coding session",
-      image: "/placeholder-gallery.jpg",
-      isActive: false,
-    },
-  ];
+type GalleryAdminProps = {
+	galleryItems?: Array<{
+		id: string;
+		name: string;
+		image: string;
+		alt: string | null;
+		isActive: boolean;
+		order: number;
+		createdAt: Date;
+		updatedAt: Date;
+	}>;
+};
 
-  return (
-    <section className="flex flex-col gap-4">
-      <TitleText>Gallery</TitleText>
-      <UploadGalleryCard />
-      <GalleryTable data={galleryData} />
-    </section>
-  );
+export default function GalleryAdmin({ galleryItems }: GalleryAdminProps) {
+	const galleryData = galleryItems ?? [];
+
+	return (
+		<section className="flex flex-col gap-4">
+			<TitleText>Gallery</TitleText>
+			<UploadGalleryCard />
+			<GalleryTable data={galleryData} />
+		</section>
+	);
 }

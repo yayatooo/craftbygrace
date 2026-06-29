@@ -17,6 +17,7 @@ import { Route as platformAdminIndexRouteImport } from './routes/(platform)/admi
 import { Route as mainPathlessIndexRouteImport } from './routes/(main)/_pathless/index'
 import { Route as ApiSongsCoverRouteImport } from './routes/api/songs/cover'
 import { Route as ApiMoviesPosterRouteImport } from './routes/api/movies/poster'
+import { Route as ApiGalleryImageRouteImport } from './routes/api/gallery/image'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as platformAdminSongsRouteImport } from './routes/(platform)/admin/songs'
 import { Route as platformAdminSettingsRouteImport } from './routes/(platform)/admin/settings'
@@ -68,6 +69,11 @@ const ApiSongsCoverRoute = ApiSongsCoverRouteImport.update({
 const ApiMoviesPosterRoute = ApiMoviesPosterRouteImport.update({
   id: '/api/movies/poster',
   path: '/api/movies/poster',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGalleryImageRoute = ApiGalleryImageRouteImport.update({
+  id: '/api/gallery/image',
+  path: '/api/gallery/image',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
@@ -199,6 +207,7 @@ export interface FileRoutesById {
   '/(platform)/admin/settings': typeof platformAdminSettingsRoute
   '/(platform)/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/gallery/image'
     | '/api/movies/poster'
     | '/api/songs/cover'
     | '/'
@@ -244,6 +254,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/gallery/image'
     | '/api/movies/poster'
     | '/api/songs/cover'
     | '/'
@@ -267,6 +278,7 @@ export interface FileRouteTypes {
     | '/(platform)/admin/settings'
     | '/(platform)/admin/songs'
     | '/api/auth/$'
+    | '/api/gallery/image'
     | '/api/movies/poster'
     | '/api/songs/cover'
     | '/(main)/_pathless/'
@@ -279,6 +291,7 @@ export interface RootRouteChildren {
   platformAdminRouteRoute: typeof platformAdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiGalleryImageRoute: typeof ApiGalleryImageRoute
   ApiMoviesPosterRoute: typeof ApiMoviesPosterRoute
   ApiSongsCoverRoute: typeof ApiSongsCoverRoute
 }
@@ -339,6 +352,13 @@ declare module '@tanstack/react-router' {
       path: '/api/movies/poster'
       fullPath: '/api/movies/poster'
       preLoaderRoute: typeof ApiMoviesPosterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/gallery/image': {
+      id: '/api/gallery/image'
+      path: '/api/gallery/image'
+      fullPath: '/api/gallery/image'
+      preLoaderRoute: typeof ApiGalleryImageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -487,6 +507,7 @@ const rootRouteChildren: RootRouteChildren = {
   platformAdminRouteRoute: platformAdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiGalleryImageRoute: ApiGalleryImageRoute,
   ApiMoviesPosterRoute: ApiMoviesPosterRoute,
   ApiSongsCoverRoute: ApiSongsCoverRoute,
 }
