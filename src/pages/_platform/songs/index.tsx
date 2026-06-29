@@ -1,8 +1,22 @@
 import { TitleText } from "#/components/title-text";
-import { SongFormCard } from "./song-form-card.temp";
-import { SongTable } from "./song-table.temp";
+import { SongFormCard } from "./song-form-card";
+import { SongTable } from "./song-table";
 
-export default function SongsAdmin() {
+type SongsPageProps = {
+  songs?: Array<{
+    id: string;
+    name: string;
+    writer: string;
+    image: string | null;
+    link: string;
+    isActive: boolean;
+    order: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+};
+
+export default function SongsAdmin({ songs = [] }: SongsPageProps) {
   return (
     <div className="w-full space-y-6">
       <div>
@@ -23,7 +37,7 @@ export default function SongsAdmin() {
           </p>
         </div>
 
-        <SongTable />
+        <SongTable data={songs} />
       </div>
     </div>
   );
