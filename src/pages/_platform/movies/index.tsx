@@ -1,8 +1,24 @@
 import { TitleText } from "#/components/title-text";
-import { MovieFormCard } from "./movie-form-card.temp";
-import { MovieTable } from "./movie-table.temp";
+import { MovieFormCard } from "./movie-form-card";
+import { MovieTable } from "./movie-table.";
 
-export default function MoviesAdmin() {
+type MoviesPageProps = {
+  movies?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    image: string | null;
+    link: string | null;
+    isActive: boolean;
+    order: number;
+    createdAt: Date;
+    updatedAt: Date;
+  }>;
+};
+
+export default function MoviesAdmin({ movies }: MoviesPageProps) {
+  const movieData = movies ?? [];
+
   return (
     <section className="flex flex-col gap-4">
       <div>
@@ -12,7 +28,7 @@ export default function MoviesAdmin() {
         </p>
       </div>
       <MovieFormCard />
-      <MovieTable />
+      <MovieTable data={movieData} />
     </section>
   );
 }

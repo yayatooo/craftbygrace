@@ -1,8 +1,9 @@
-import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "@better-auth/drizzle-adapter";
-import { db } from "#/db";
-import { users } from "#/db/schema";
+import { betterAuth } from "better-auth";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
+
+import { db } from "#/db";
+import { account, session, user, verification } from "#/db/schema";
 
 function requiredEnv(name: string) {
   const value = process.env[name];
@@ -21,7 +22,10 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: {
-      users,
+      user,
+      session,
+      account,
+      verification,
     },
   }),
 

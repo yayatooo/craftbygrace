@@ -15,6 +15,7 @@ import { Route as platformAdminRouteRouteImport } from './routes/(platform)/admi
 import { Route as mainPathlessRouteRouteImport } from './routes/(main)/_pathless/route'
 import { Route as platformAdminIndexRouteImport } from './routes/(platform)/admin/index'
 import { Route as mainPathlessIndexRouteImport } from './routes/(main)/_pathless/index'
+import { Route as ApiMoviesPosterRouteImport } from './routes/api/movies/poster'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as platformAdminSongsRouteImport } from './routes/(platform)/admin/songs'
 import { Route as platformAdminSettingsRouteImport } from './routes/(platform)/admin/settings'
@@ -57,6 +58,11 @@ const mainPathlessIndexRoute = mainPathlessIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => mainPathlessRouteRoute,
+} as any)
+const ApiMoviesPosterRoute = ApiMoviesPosterRouteImport.update({
+  id: '/api/movies/poster',
+  path: '/api/movies/poster',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/': typeof mainPathlessIndexRoute
   '/admin/': typeof platformAdminIndexRoute
 }
@@ -161,6 +168,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/': typeof mainPathlessIndexRoute
   '/admin': typeof platformAdminIndexRoute
 }
@@ -183,6 +191,7 @@ export interface FileRoutesById {
   '/(platform)/admin/settings': typeof platformAdminSettingsRoute
   '/(platform)/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
   '/(platform)/admin/': typeof platformAdminIndexRoute
 }
@@ -205,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/movies/poster'
     | '/'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -224,6 +234,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/movies/poster'
     | '/'
     | '/admin'
   id:
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/(platform)/admin/settings'
     | '/(platform)/admin/songs'
     | '/api/auth/$'
+    | '/api/movies/poster'
     | '/(main)/_pathless/'
     | '/(platform)/admin/'
   fileRoutesById: FileRoutesById
@@ -255,6 +267,7 @@ export interface RootRouteChildren {
   platformAdminRouteRoute: typeof platformAdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiMoviesPosterRoute: typeof ApiMoviesPosterRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -300,6 +313,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof mainPathlessIndexRouteImport
       parentRoute: typeof mainPathlessRouteRoute
+    }
+    '/api/movies/poster': {
+      id: '/api/movies/poster'
+      path: '/api/movies/poster'
+      fullPath: '/api/movies/poster'
+      preLoaderRoute: typeof ApiMoviesPosterRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -447,6 +467,7 @@ const rootRouteChildren: RootRouteChildren = {
   platformAdminRouteRoute: platformAdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiMoviesPosterRoute: ApiMoviesPosterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
