@@ -1,9 +1,26 @@
+import type React from "react";
+
 import { SidebarInset, SidebarProvider } from "#/components/ui/sidebar";
+import { getCurrentAuth } from "#/features/auth/auth.server";
 import { AppSidebar } from "#/pages/_platform/components/app-sidebar";
 import { SiteHeader } from "#/pages/_platform/components/site-header";
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(platform)/admin")({
+  beforeLoad: async () => {
+    const currentAuth = await getCurrentAuth();
+
+    if (!currentAuth?.isOwner) {
+      throw redirect({
+        to: "/login",
+      });
+    }
+
+    return {
+      user: currentAuth.user,
+    };
+  },
+
   component: RouteComponent,
 });
 
@@ -18,8 +35,10 @@ function RouteComponent() {
       }
     >
       <AppSidebar variant="inset" />
+
       <SidebarInset>
         <SiteHeader />
+
         <section className="p-6">
           <Outlet />
         </section>

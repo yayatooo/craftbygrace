@@ -157,6 +157,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+[data-sonner-toast][data-type="error"][data-styled="true"] {
+  background: var(--destructive) !important;
+  border-color: var(--destructive) !important;
+  color: var(--destructive-foreground) !important;
+}
+
+[data-sonner-toast][data-type="error"] [data-title],
+[data-sonner-toast][data-type="error"] [data-description],
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--destructive-foreground) !important;
+}
+
 a {
   color: inherit;
   text-decoration: none;

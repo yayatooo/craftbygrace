@@ -160,6 +160,7 @@ export const experiences = pgTable(
 
     companyName: varchar("company_name", { length: 160 }).notNull(),
     role: varchar("role", { length: 160 }).notNull(),
+    companyLogo: varchar("company_logo"),
 
     startDate: timestamp("start_date", { withTimezone: true }).notNull(),
     endDate: timestamp("end_date", { withTimezone: true }),

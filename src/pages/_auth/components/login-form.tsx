@@ -1,5 +1,7 @@
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
 import {
   Field,
   FieldDescription,
@@ -7,16 +9,51 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "#/components/ui/field";
+import { authClient } from "#/lib/auth-client";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "#/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const navigate = useNavigate();
+  const [isPending, setIsPending] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    const email = formData.get("email")?.toString() ?? "";
+    const password = formData.get("password")?.toString() ?? "";
+
+    if (!email || !password) return;
+
+    setIsPending(true);
+
+    try {
+      const result = await authClient.signIn.email({ email, password });
+      if (result.error) {
+        console.log("Better Auth login error:", result.error);
+
+        toast.error(result.error.message || "Invalid email or password.");
+
+        return;
+      }
+      toast.success("Logged in successfully");
+      navigate({ to: "/admin/dashboard" });
+    } catch {
+      toast.error("Unable to login. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
+  }
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <form>
+      <form onSubmit={handleSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
             <a
@@ -38,14 +75,25 @@ export function LoginForm({
           <Field>
             <FieldLabel htmlFor="email">Email</FieldLabel>
             <Input
-              id="email"
+              name="email"
               type="email"
               placeholder="m@example.com"
               required
             />
           </Field>
           <Field>
-            <Button type="submit">Login</Button>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input
+              name="password"
+              type="password"
+              placeholder="*******"
+              required
+            />
+          </Field>
+          <Field>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Logging in..." : "Login"}
+            </Button>
           </Field>
           <FieldSeparator>Or</FieldSeparator>
           <Field className="grid gap-4 sm:grid-cols-2">
