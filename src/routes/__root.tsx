@@ -3,8 +3,8 @@ import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import ThemeScript from "#/components/theme-script";
 import appCss from "../styles.css?url";
-import { NotFoundComponent } from "./not-found";
 import { Toaster } from "#/components/ui/sonner";
+import { NotFoundComponent } from "#/components/not-found";
 
 export const Route = createRootRoute({
   head: () => ({

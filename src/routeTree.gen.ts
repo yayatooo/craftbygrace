@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as platformAdminRouteRouteImport } from './routes/(platform)/admin/route'
 import { Route as mainPathlessRouteRouteImport } from './routes/(main)/_pathless/route'
@@ -34,11 +33,6 @@ import { Route as mainPathlessBlogRouteImport } from './routes/(main)/_pathless/
 import { Route as mainPathlessArchivesRouteImport } from './routes/(main)/_pathless/archives'
 import { Route as mainPathlessAboutRouteImport } from './routes/(main)/_pathless/about'
 
-const NotFoundRoute = NotFoundRouteImport.update({
-  id: '/not-found',
-  path: '/not-found',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
   path: '/login',
@@ -157,7 +151,6 @@ const mainPathlessAboutRoute = mainPathlessAboutRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/not-found': typeof NotFoundRoute
   '/admin': typeof platformAdminRouteRouteWithChildren
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
@@ -182,7 +175,6 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof platformAdminIndexRoute
 }
 export interface FileRoutesByTo {
-  '/not-found': typeof NotFoundRoute
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
@@ -207,7 +199,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/not-found': typeof NotFoundRoute
   '/(main)/_pathless': typeof mainPathlessRouteRouteWithChildren
   '/(platform)/admin': typeof platformAdminRouteRouteWithChildren
   '/(auth)/login': typeof authLoginRoute
@@ -235,7 +226,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/not-found'
     | '/admin'
     | '/login'
     | '/about'
@@ -260,7 +250,6 @@ export interface FileRouteTypes {
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/not-found'
     | '/login'
     | '/about'
     | '/archives'
@@ -284,7 +273,6 @@ export interface FileRouteTypes {
     | '/admin'
   id:
     | '__root__'
-    | '/not-found'
     | '/(main)/_pathless'
     | '/(platform)/admin'
     | '/(auth)/login'
@@ -311,7 +299,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  NotFoundRoute: typeof NotFoundRoute
   mainPathlessRouteRoute: typeof mainPathlessRouteRouteWithChildren
   platformAdminRouteRoute: typeof platformAdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
@@ -325,13 +312,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/not-found': {
-      id: '/not-found'
-      path: '/not-found'
-      fullPath: '/not-found'
-      preLoaderRoute: typeof NotFoundRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(auth)/login': {
       id: '/(auth)/login'
       path: '/login'
@@ -543,7 +523,6 @@ const platformAdminRouteRouteWithChildren =
   platformAdminRouteRoute._addFileChildren(platformAdminRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  NotFoundRoute: NotFoundRoute,
   mainPathlessRouteRoute: mainPathlessRouteRouteWithChildren,
   platformAdminRouteRoute: platformAdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
