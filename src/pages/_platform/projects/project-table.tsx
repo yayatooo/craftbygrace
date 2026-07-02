@@ -1,334 +1,284 @@
-import { useState } from "react";
+import { useRouter } from "@tanstack/react-router";
 import {
-  ExternalLink,
-  EyeOff,
-  FolderGit2,
-  ImageIcon,
-  MoreHorizontal,
-  Pencil,
-  Star,
-  Trash2,
+	ExternalLink,
+	FolderGit2,
+	MoreHorizontal,
+	Pencil,
+	Trash2,
 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "#/components/ui/alert-dialog";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
-import { Switch } from "#/components/ui/switch";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "#/components/ui/alert-dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "#/components/ui/table";
+import { deleteProjectAction } from "#/features/projects/projects.actions";
+import { ProjectEditDialog } from "./project-edit-dialog";
 
-type ProjectItem = {
-  id: string;
-  thumbnail: string | null;
-  name: string;
-  slug: string;
-  description: string;
-  techStack: string[];
-  isCurrent: boolean;
-  isSecret: boolean;
-  isActive: boolean;
-  demoLink: string | null;
-  repoLink: string | null;
-  order: number;
+export type ProjectItem = {
+	id: string;
+	thumbnail: string | null;
+	name: string;
+	slug: string;
+	description: string;
+	techStack: string[];
+	isCurrent: boolean;
+	isSecret: boolean;
+	isActive: boolean;
+	demoLink: string | null;
+	repoLink: string | null;
+	order: number;
+	createdAt: Date;
+	updatedAt: Date;
 };
 
-const projectsData: ProjectItem[] = [
-  {
-    id: "1",
-    thumbnail:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400&auto=format&fit=crop",
-    name: "Tuwucook AI",
-    slug: "tuwucook-ai",
-    description:
-      "AI cooking assistant that helps users generate recipes based on their kitchen ingredients.",
-    techStack: ["TanStack", "Hono", "Drizzle", "PostgreSQL"],
-    isCurrent: true,
-    isSecret: false,
-    isActive: true,
-    demoLink: "https://tuwucook.ai",
-    repoLink: "https://github.com/yayatooo/tuwucook",
-    order: 1,
-  },
-  {
-    id: "2",
-    thumbnail:
-      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=400&auto=format&fit=crop",
-    name: "Benson Dashboard",
-    slug: "benson-dashboard",
-    description:
-      "Business management dashboard for export, import, inventory, sales, and expenses.",
-    techStack: ["Next.js", "Drizzle", "PostgreSQL", "Docker"],
-    isCurrent: true,
-    isSecret: true,
-    isActive: true,
-    demoLink: null,
-    repoLink: null,
-    order: 2,
-  },
-  {
-    id: "3",
-    thumbnail: null,
-    name: "Markas Mobil",
-    slug: "markas-mobil",
-    description:
-      "Used-car showroom website with admin dashboard, car management, and sold listing.",
-    techStack: ["Next.js", "Prisma", "PostgreSQL", "R2"],
-    isCurrent: false,
-    isSecret: false,
-    isActive: false,
-    demoLink: "https://markasmobil.com",
-    repoLink: null,
-    order: 3,
-  },
-];
+type ProjectTableProps = {
+	data?: ProjectItem[];
+};
 
-export function ProjectTable() {
-  const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(
-    null,
-  );
+export function ProjectTable({ data = [] }: ProjectTableProps) {
+	const router = useRouter();
 
-  function handleEdit(project: ProjectItem) {
-    console.log("edit project:", project);
-  }
+	const [selectedProject, setSelectedProject] = useState<ProjectItem | null>(
+		null,
+	);
+	const [editingProject, setEditingProject] = useState<ProjectItem | null>(
+		null,
+	);
+	const [isEditOpen, setIsEditOpen] = useState(false);
+	const [isDeleting, setIsDeleting] = useState(false);
 
-  function handleToggleActive(project: ProjectItem, value: boolean) {
-    console.log("toggle active:", project.id, value);
-  }
+	function handleEdit(project: ProjectItem) {
+		setEditingProject(project);
+		setIsEditOpen(true);
+	}
 
-  function handleToggleCurrent(project: ProjectItem, value: boolean) {
-    console.log("toggle current:", project.id, value);
-  }
+	async function handleDelete() {
+		if (!selectedProject) return;
 
-  function handleDelete() {
-    if (!selectedProject) return;
+		const projectToDelete = selectedProject;
 
-    console.log("delete project:", selectedProject.id);
-    setSelectedProject(null);
-  }
+		setIsDeleting(true);
 
-  return (
-    <>
-      <div className="overflow-hidden rounded-2xl border bg-background">
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-muted/40 hover:bg-muted/40">
-              <TableHead className="w-18">Image</TableHead>
-              <TableHead>Project</TableHead>
-              <TableHead>Tech Stack</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="w-22.5">Order</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
+		try {
+			await deleteProjectAction({
+				id: projectToDelete.id,
+			});
 
-          <TableBody>
-            {projectsData.map((project) => (
-              <TableRow key={project.id}>
-                <TableCell>
-                  <div className="flex size-12 items-center justify-center overflow-hidden rounded-md border bg-muted">
-                    {project.thumbnail ? (
-                      <img
-                        src={project.thumbnail}
-                        alt={project.name}
-                        className="size-full object-cover"
-                      />
-                    ) : (
-                      <ImageIcon className="size-5 text-muted-foreground" />
-                    )}
-                  </div>
-                </TableCell>
+			toast.success("Project deleted successfully");
+			setSelectedProject(null);
+			await router.invalidate();
+		} catch (error) {
+			console.error("Failed to delete project:", error);
+			toast.error("Failed to delete project.");
+		} finally {
+			setIsDeleting(false);
+		}
+	}
 
-                <TableCell>
-                  <div className="max-w-md space-y-2">
-                    <div>
-                      <p className="font-medium leading-none">{project.name}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        /{project.slug}
-                      </p>
-                    </div>
+	return (
+		<>
+			<div className="overflow-hidden rounded-2xl border bg-background">
+				<Table>
+					<TableHeader>
+						<TableRow className="bg-muted/40 hover:bg-muted/40">
+							<TableHead>Project</TableHead>
+							<TableHead>Tech Stack</TableHead>
+							<TableHead>Current</TableHead>
+							<TableHead>Active</TableHead>
+							<TableHead>Secret</TableHead>
+							<TableHead className="w-22.5">Order</TableHead>
+							<TableHead className="text-right">Actions</TableHead>
+						</TableRow>
+					</TableHeader>
 
-                    <p className="line-clamp-2 text-xs text-muted-foreground">
-                      {project.description}
-                    </p>
+					<TableBody>
+						{data.length === 0 ? (
+							<TableRow>
+								<TableCell
+									colSpan={7}
+									className="h-24 text-center text-muted-foreground"
+								>
+									Belum ada data project.
+								</TableCell>
+							</TableRow>
+						) : (
+							data.map((project) => (
+								<TableRow key={project.id}>
+									<TableCell>
+										<div className="space-y-1">
+											<p className="font-medium leading-none">{project.name}</p>
+											<p className="text-xs text-muted-foreground">
+												/{project.slug}
+											</p>
+										</div>
+									</TableCell>
 
-                    <div className="flex flex-wrap gap-1.5">
-                      {project.isCurrent ? (
-                        <Badge variant="default" className="gap-1">
-                          <Star className="size-3" />
-                          Current
-                        </Badge>
-                      ) : null}
+									<TableCell>
+										<span className="text-sm text-muted-foreground">
+											{formatTechStackCount(project.techStack.length)}
+										</span>
+									</TableCell>
 
-                      {project.isSecret ? (
-                        <Badge variant="secondary" className="gap-1">
-                          <EyeOff className="size-3" />
-                          NDA
-                        </Badge>
-                      ) : null}
-                    </div>
-                  </div>
-                </TableCell>
+									<TableCell>
+										<Badge
+											variant={project.isCurrent ? "default" : "secondary"}
+										>
+											{project.isCurrent ? "Current" : "Not Current"}
+										</Badge>
+									</TableCell>
 
-                <TableCell>
-                  <div className="flex max-w-60 flex-wrap gap-1.5">
-                    {project.techStack.map((tech) => (
-                      <Badge key={tech} variant="outline">
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
+									<TableCell>
+										<Badge variant={project.isActive ? "default" : "secondary"}>
+											{project.isActive ? "Active" : "Inactive"}
+										</Badge>
+									</TableCell>
 
-                <TableCell>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <Switch
-                        checked={project.isActive}
-                        onCheckedChange={(value) =>
-                          handleToggleActive(project, value)
-                        }
-                        aria-label={`Toggle ${project.name} active status`}
-                      />
+									<TableCell>
+										<Badge variant={project.isSecret ? "secondary" : "outline"}>
+											{project.isSecret ? "Secret" : "Public"}
+										</Badge>
+									</TableCell>
 
-                      <Badge
-                        variant={project.isActive ? "default" : "secondary"}
-                      >
-                        {project.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </div>
+									<TableCell>
+										<span className="text-sm text-muted-foreground">
+											{project.order}
+										</span>
+									</TableCell>
 
-                    <div className="flex items-center gap-3">
-                      <Switch
-                        checked={project.isCurrent}
-                        onCheckedChange={(value) =>
-                          handleToggleCurrent(project, value)
-                        }
-                        aria-label={`Toggle ${project.name} current status`}
-                      />
+									<TableCell className="text-right">
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="ghost" size="icon">
+													<MoreHorizontal className="size-4" />
+													<span className="sr-only">Open project actions</span>
+												</Button>
+											</DropdownMenuTrigger>
 
-                      <span className="text-xs text-muted-foreground">
-                        Current project
-                      </span>
-                    </div>
-                  </div>
-                </TableCell>
+											<DropdownMenuContent align="end" className="w-44">
+												<DropdownMenuItem onClick={() => handleEdit(project)}>
+													<Pencil className="mr-2 size-4" />
+													Edit
+												</DropdownMenuItem>
 
-                <TableCell>
-                  <span className="text-sm text-muted-foreground">
-                    {project.order}
-                  </span>
-                </TableCell>
+												{project.demoLink ? (
+													<DropdownMenuItem asChild>
+														<a
+															href={project.demoLink}
+															target="_blank"
+															rel="noreferrer"
+														>
+															<ExternalLink className="mr-2 size-4" />
+															Open Demo
+														</a>
+													</DropdownMenuItem>
+												) : null}
 
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon">
-                        <MoreHorizontal className="size-4" />
-                        <span className="sr-only">Open project actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
+												{project.repoLink ? (
+													<DropdownMenuItem asChild>
+														<a
+															href={project.repoLink}
+															target="_blank"
+															rel="noreferrer"
+														>
+															<FolderGit2 className="mr-2 size-4" />
+															Open Repo
+														</a>
+													</DropdownMenuItem>
+												) : null}
 
-                    <DropdownMenuContent align="end" className="w-44">
-                      <DropdownMenuItem onClick={() => handleEdit(project)}>
-                        <Pencil className="mr-2 size-4" />
-                        Edit
-                      </DropdownMenuItem>
+												<DropdownMenuSeparator />
 
-                      {project.demoLink ? (
-                        <DropdownMenuItem asChild>
-                          <a
-                            href={project.demoLink}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <ExternalLink className="mr-2 size-4" />
-                            Open Demo
-                          </a>
-                        </DropdownMenuItem>
-                      ) : null}
+												<DropdownMenuItem
+													className="text-destructive focus:text-destructive"
+													onClick={() => setSelectedProject(project)}
+												>
+													<Trash2 className="mr-2 size-4" />
+													Delete
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</TableCell>
+								</TableRow>
+							))
+						)}
+					</TableBody>
+				</Table>
+			</div>
 
-                      {project.repoLink ? (
-                        <DropdownMenuItem asChild>
-                          <a
-                            href={project.repoLink}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <FolderGit2 className="mr-2 size-4" />
-                            Open Repo
-                          </a>
-                        </DropdownMenuItem>
-                      ) : null}
+			<AlertDialog
+				open={Boolean(selectedProject)}
+				onOpenChange={(open) => {
+					if (!open && !isDeleting) setSelectedProject(null);
+				}}
+			>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete project?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will permanently delete{" "}
+							<span className="font-medium text-foreground">
+								{selectedProject?.name}
+							</span>{" "}
+							from your project list. This action cannot be undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
 
-                      <DropdownMenuSeparator />
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={(event) => {
+								event.preventDefault();
+								void handleDelete();
+							}}
+							disabled={isDeleting}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							{isDeleting ? "Deleting..." : "Delete"}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={() => setSelectedProject(project)}
-                      >
-                        <Trash2 className="mr-2 size-4" />
-                        Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+			<ProjectEditDialog
+				project={editingProject}
+				open={isEditOpen}
+				onOpenChange={(open) => {
+					setIsEditOpen(open);
 
-      <AlertDialog
-        open={Boolean(selectedProject)}
-        onOpenChange={(open) => {
-          if (!open) setSelectedProject(null);
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete project?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will permanently delete{" "}
-              <span className="font-medium text-foreground">
-                {selectedProject?.name}
-              </span>{" "}
-              from your project list. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
+					if (!open) {
+						setEditingProject(null);
+					}
+				}}
+			/>
+		</>
+	);
+}
 
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
-  );
+function formatTechStackCount(count: number) {
+	return `${count} ${count === 1 ? "technology" : "technologies"}`;
 }

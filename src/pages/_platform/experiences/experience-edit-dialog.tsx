@@ -15,12 +15,13 @@ import { toast } from "sonner";
 
 import { Button } from "#/components/ui/button";
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from "#/components/ui/card";
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "#/components/ui/dialog";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 import {
@@ -32,9 +33,10 @@ import {
 } from "#/components/ui/select";
 import { Switch } from "#/components/ui/switch";
 import {
-	createExperienceAction,
 	type ExperienceJobType,
+	updateExperienceAction,
 } from "#/features/experiences/experiences.actions";
+import type { ExperienceItem } from "./experience-table";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
@@ -48,10 +50,37 @@ const jobTypeOptions: Array<{ value: ExperienceJobType; label: string }> = [
 	{ value: "self_employed", label: "Self-employed" },
 ];
 
-export function ExperienceFormCard() {
+type ExperienceEditDialogProps = {
+	experience: ExperienceItem | null;
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+};
+
+function toDateInputValue(value: Date | string | null) {
+	if (!value) return "";
+
+	const date = value instanceof Date ? value : new Date(value);
+
+	if (Number.isNaN(date.getTime())) return "";
+
+	const year = date.getUTCFullYear();
+	const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+	const day = String(date.getUTCDate()).padStart(2, "0");
+
+	return `${year}-${month}-${day}`;
+}
+
+function isExperienceJobType(value: string): value is ExperienceJobType {
+	return jobTypeOptions.some((option) => option.value === value);
+}
+
+export function ExperienceEditDialog({
+	experience,
+	open,
+	onOpenChange,
+}: ExperienceEditDialogProps) {
 	const router = useRouter();
 	const fileInputRef = useRef<HTMLInputElement | null>(null);
-	const endDateRef = useRef<HTMLInputElement | null>(null);
 
 	const [isPending, setIsPending] = useState(false);
 	const [pendingStep, setPendingStep] = useState<
@@ -59,9 +88,42 @@ export function ExperienceFormCard() {
 	>("idle");
 	const [isCurrent, setIsCurrent] = useState(false);
 	const [typeJob, setTypeJob] = useState<ExperienceJobType>("full_time");
+	const [endDate, setEndDate] = useState("");
 	const [logoPreview, setLogoPreview] = useState<string | null>(null);
 	const [logoFileName, setLogoFileName] = useState<string | null>(null);
 	const [companyLogoFile, setCompanyLogoFile] = useState<File | null>(null);
+	const [shouldRemoveCompanyLogo, setShouldRemoveCompanyLogo] = useState(false);
+
+	useEffect(() => {
+		if (!experience) {
+			setIsCurrent(false);
+			setTypeJob("full_time");
+			setEndDate("");
+			setLogoPreview(null);
+			setLogoFileName(null);
+			setCompanyLogoFile(null);
+			setShouldRemoveCompanyLogo(false);
+			return;
+		}
+
+		setIsCurrent(experience.isCurrent);
+		setTypeJob(
+			isExperienceJobType(experience.typeJob)
+				? experience.typeJob
+				: "full_time",
+		);
+		setEndDate(
+			experience.isCurrent ? "" : toDateInputValue(experience.endDate),
+		);
+		setLogoPreview(experience.companyLogo);
+		setLogoFileName(null);
+		setCompanyLogoFile(null);
+		setShouldRemoveCompanyLogo(false);
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
+		}
+	}, [experience]);
 
 	useEffect(() => {
 		return () => {
@@ -74,20 +136,20 @@ export function ExperienceFormCard() {
 	function handleCurrentChange(value: boolean) {
 		setIsCurrent(value);
 
-		if (value && endDateRef.current) {
-			endDateRef.current.value = "";
+		if (value) {
+			setEndDate("");
 		}
 	}
 
 	function setSelectedLogo(file: File) {
 		if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-			removeLogo();
+			resetSelectedLogo();
 			toast.error("Company logo must be a PNG, JPG, or WEBP image.");
 			return;
 		}
 
 		if (file.size > MAX_FILE_SIZE) {
-			removeLogo();
+			resetSelectedLogo();
 			toast.error("Company logo must be 5 MB or smaller.");
 			return;
 		}
@@ -99,6 +161,7 @@ export function ExperienceFormCard() {
 		setLogoPreview(URL.createObjectURL(file));
 		setLogoFileName(file.name);
 		setCompanyLogoFile(file);
+		setShouldRemoveCompanyLogo(false);
 	}
 
 	function handleLogoChange(event: ChangeEvent<HTMLInputElement>) {
@@ -109,12 +172,14 @@ export function ExperienceFormCard() {
 		setSelectedLogo(file);
 	}
 
-	function removeLogo() {
+	function resetSelectedLogo() {
 		if (logoPreview?.startsWith("blob:")) {
 			URL.revokeObjectURL(logoPreview);
 		}
 
-		setLogoPreview(null);
+		setLogoPreview(
+			shouldRemoveCompanyLogo ? null : (experience?.companyLogo ?? null),
+		);
 		setLogoFileName(null);
 		setCompanyLogoFile(null);
 
@@ -123,29 +188,44 @@ export function ExperienceFormCard() {
 		}
 	}
 
-	function resetForm(form: HTMLFormElement | null) {
-		form?.reset();
-		removeLogo();
-		setIsCurrent(false);
-		setTypeJob("full_time");
+	function removeExistingLogo() {
+		if (logoPreview?.startsWith("blob:")) {
+			URL.revokeObjectURL(logoPreview);
+		}
 
-		if (endDateRef.current) {
-			endDateRef.current.value = "";
+		setLogoPreview(null);
+		setLogoFileName(null);
+		setCompanyLogoFile(null);
+		setShouldRemoveCompanyLogo(true);
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
 		}
 	}
 
-	function validateDates(startDate: string, endDate: string | null) {
+	function restoreExistingLogo() {
+		setLogoPreview(experience?.companyLogo ?? null);
+		setLogoFileName(null);
+		setCompanyLogoFile(null);
+		setShouldRemoveCompanyLogo(false);
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = "";
+		}
+	}
+
+	function validateDates(startDate: string, nextEndDate: string | null) {
 		if (!startDate) {
 			toast.error("Start date is required.");
 			return false;
 		}
 
-		if (!isCurrent && !endDate) {
+		if (!isCurrent && !nextEndDate) {
 			toast.error("End date is required unless this is a current position.");
 			return false;
 		}
 
-		if (endDate && new Date(endDate) < new Date(startDate)) {
+		if (nextEndDate && new Date(nextEndDate) < new Date(startDate)) {
 			toast.error("End date cannot be earlier than start date.");
 			return false;
 		}
@@ -156,33 +236,35 @@ export function ExperienceFormCard() {
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
 
-		const form = event.currentTarget;
-		const formData = new FormData(form);
+		if (!experience) return;
 
+		const formData = new FormData(event.currentTarget);
 		const companyName = formData.get("companyName")?.toString().trim() ?? "";
 		const role = formData.get("role")?.toString().trim() ?? "";
 		const startDate = formData.get("startDate")?.toString() ?? "";
-		const rawEndDate = formData.get("endDate")?.toString() ?? "";
-		const endDate = isCurrent ? null : rawEndDate || null;
+		const nextEndDate = isCurrent ? null : endDate || null;
 		const location = formData.get("location")?.toString().trim() ?? "";
 		const order = Number(formData.get("order") ?? 0);
 
-		if (!validateDates(startDate, endDate)) return;
+		if (!validateDates(startDate, nextEndDate)) return;
 
 		setIsPending(true);
 
 		try {
-			await createExperienceAction(
+			await updateExperienceAction(
 				{
+					id: experience.id,
 					companyName,
 					role,
 					startDate,
-					endDate,
+					endDate: nextEndDate,
 					isCurrent,
 					typeJob,
 					location: location || null,
 					order,
+					currentCompanyLogo: experience.companyLogo,
 					companyLogoFile,
+					shouldRemoveCompanyLogo,
 				},
 				{
 					onUploading: () => setPendingStep("uploading"),
@@ -190,13 +272,12 @@ export function ExperienceFormCard() {
 				},
 			);
 
-			toast.success("Experience created successfully");
-			resetForm(form);
-
+			toast.success("Experience updated successfully");
+			onOpenChange(false);
 			await router.invalidate();
 		} catch (error) {
-			console.error("Failed to create experience:", error);
-			toast.error("Failed to create experience.");
+			console.error("Failed to update experience:", error);
+			toast.error("Failed to update experience.");
 		} finally {
 			setIsPending(false);
 			setPendingStep("idle");
@@ -204,42 +285,34 @@ export function ExperienceFormCard() {
 	}
 
 	return (
-		<Card className="w-full shadow-none">
-			<CardHeader>
-				<div className="flex items-start justify-between gap-4">
-					<div className="space-y-1">
-						<CardTitle className="flex items-center gap-2 text-xl">
-							<BriefcaseBusiness className="size-5" />
-							Add Experience
-						</CardTitle>
-						<CardDescription>
-							Add your work history, freelance work, or professional path.
-						</CardDescription>
-					</div>
+		<Dialog
+			open={open}
+			onOpenChange={(nextOpen) => {
+				if (!isPending) onOpenChange(nextOpen);
+			}}
+		>
+			<DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-2xl">
+				<DialogHeader>
+					<DialogTitle>Edit Experience</DialogTitle>
+					<DialogDescription>
+						Update work history, freelance work, or professional path details.
+					</DialogDescription>
+				</DialogHeader>
 
-					<div className="flex items-center gap-2 rounded-md border px-3 py-2">
-						<Switch
-							id="experience-current"
-							checked={isCurrent}
-							onCheckedChange={handleCurrentChange}
-						/>
-						<Label htmlFor="experience-current" className="text-sm">
-							Current Position
-						</Label>
-					</div>
-				</div>
-			</CardHeader>
-
-			<CardContent>
-				<form className="space-y-6" onSubmit={handleSubmit}>
+				<form
+					key={experience?.id ?? "empty"}
+					className="space-y-6"
+					onSubmit={handleSubmit}
+				>
 					<div className="grid gap-5 md:grid-cols-2">
 						<div className="space-y-2">
-							<Label htmlFor="experience-company">Company Name</Label>
+							<Label htmlFor="edit-experience-company">Company Name</Label>
 							<div className="relative">
 								<Building2 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 								<Input
-									id="experience-company"
+									id="edit-experience-company"
 									name="companyName"
+									defaultValue={experience?.companyName ?? ""}
 									placeholder="Evindo Global Putra"
 									className="pl-9"
 									required
@@ -248,12 +321,13 @@ export function ExperienceFormCard() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="experience-role">Role</Label>
+							<Label htmlFor="edit-experience-role">Role</Label>
 							<div className="relative">
 								<BriefcaseBusiness className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 								<Input
-									id="experience-role"
+									id="edit-experience-role"
 									name="role"
+									defaultValue={experience?.role ?? ""}
 									placeholder="Full Stack Developer"
 									className="pl-9"
 									required
@@ -264,10 +338,10 @@ export function ExperienceFormCard() {
 
 					<div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_160px]">
 						<div className="space-y-2">
-							<Label htmlFor="experience-company-logo">Company Logo</Label>
+							<Label htmlFor="edit-experience-company-logo">Company Logo</Label>
 
 							<label
-								htmlFor="experience-company-logo"
+								htmlFor="edit-experience-company-logo"
 								className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 rounded-md border border-dashed bg-muted/20 px-4 text-center transition-colors hover:bg-muted/40"
 							>
 								<Upload className="size-5 text-muted-foreground" />
@@ -283,7 +357,7 @@ export function ExperienceFormCard() {
 								</div>
 
 								<Input
-									id="experience-company-logo"
+									id="edit-experience-company-logo"
 									name="companyLogoFile"
 									type="file"
 									accept="image/png,image/jpeg,image/webp"
@@ -311,7 +385,9 @@ export function ExperienceFormCard() {
 											variant="secondary"
 											size="icon"
 											className="absolute right-2 top-2 size-7"
-											onClick={removeLogo}
+											onClick={
+												companyLogoFile ? resetSelectedLogo : removeExistingLogo
+											}
 											aria-label="Remove company logo"
 											disabled={isPending}
 										>
@@ -325,18 +401,31 @@ export function ExperienceFormCard() {
 									</div>
 								)}
 							</div>
+
+							{shouldRemoveCompanyLogo && experience?.companyLogo ? (
+								<Button
+									type="button"
+									variant="outline"
+									size="sm"
+									disabled={isPending}
+									onClick={restoreExistingLogo}
+								>
+									Restore Logo
+								</Button>
+							) : null}
 						</div>
 					</div>
 
 					<div className="grid gap-5 md:grid-cols-2">
 						<div className="space-y-2">
-							<Label htmlFor="experience-start-date">Start Date</Label>
+							<Label htmlFor="edit-experience-start-date">Start Date</Label>
 							<div className="relative">
 								<CalendarDays className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 								<Input
-									id="experience-start-date"
+									id="edit-experience-start-date"
 									name="startDate"
 									type="date"
+									defaultValue={toDateInputValue(experience?.startDate ?? null)}
 									className="pl-9"
 									required
 								/>
@@ -344,17 +433,18 @@ export function ExperienceFormCard() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="experience-end-date">End Date</Label>
+							<Label htmlFor="edit-experience-end-date">End Date</Label>
 							<div className="relative">
 								<CalendarDays className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 								<Input
-									id="experience-end-date"
+									id="edit-experience-end-date"
 									name="endDate"
 									type="date"
+									value={endDate}
+									onChange={(event) => setEndDate(event.target.value)}
 									className="pl-9"
 									disabled={isCurrent}
 									required={!isCurrent}
-									ref={endDateRef}
 								/>
 							</div>
 							<p className="text-xs text-muted-foreground">
@@ -367,14 +457,14 @@ export function ExperienceFormCard() {
 
 					<div className="grid gap-5 md:grid-cols-2">
 						<div className="space-y-2">
-							<Label htmlFor="experience-type-job">Job Type</Label>
+							<Label htmlFor="edit-experience-type-job">Job Type</Label>
 							<Select
 								value={typeJob}
 								onValueChange={(value) =>
 									setTypeJob(value as ExperienceJobType)
 								}
 							>
-								<SelectTrigger id="experience-type-job" name="typeJob">
+								<SelectTrigger id="edit-experience-type-job" name="typeJob">
 									<SelectValue placeholder="Select job type" />
 								</SelectTrigger>
 								<SelectContent>
@@ -388,12 +478,13 @@ export function ExperienceFormCard() {
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="experience-location">Location</Label>
+							<Label htmlFor="edit-experience-location">Location</Label>
 							<div className="relative">
 								<MapPin className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
 								<Input
-									id="experience-location"
+									id="edit-experience-location"
 									name="location"
+									defaultValue={experience?.location ?? ""}
 									placeholder="Jakarta, Indonesia"
 									className="pl-9"
 								/>
@@ -402,24 +493,33 @@ export function ExperienceFormCard() {
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="experience-order">Order</Label>
+						<Label htmlFor="edit-experience-order">Order</Label>
 						<Input
-							id="experience-order"
+							id="edit-experience-order"
 							name="order"
 							type="number"
 							min={0}
-							defaultValue={0}
+							defaultValue={experience?.order ?? 0}
 						/>
 					</div>
 
-					<div className="flex justify-end gap-3 border-t pt-6">
+					<div className="flex items-center gap-2 rounded-md border px-3 py-2">
+						<Switch
+							id="edit-experience-current"
+							checked={isCurrent}
+							onCheckedChange={handleCurrentChange}
+						/>
+						<Label htmlFor="edit-experience-current" className="text-sm">
+							Current Position
+						</Label>
+					</div>
+
+					<DialogFooter>
 						<Button
 							type="button"
 							variant="outline"
 							disabled={isPending}
-							onClick={(event) => {
-								resetForm(event.currentTarget.form);
-							}}
+							onClick={() => onOpenChange(false)}
 						>
 							Cancel
 						</Button>
@@ -430,11 +530,11 @@ export function ExperienceFormCard() {
 								? "Uploading..."
 								: pendingStep === "saving"
 									? "Saving..."
-									: "Save Experience"}
+									: "Save Changes"}
 						</Button>
-					</div>
+					</DialogFooter>
 				</form>
-			</CardContent>
-		</Card>
+			</DialogContent>
+		</Dialog>
 	);
 }

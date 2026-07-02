@@ -16,8 +16,10 @@ import { Route as mainPathlessRouteRouteImport } from './routes/(main)/_pathless
 import { Route as platformAdminIndexRouteImport } from './routes/(platform)/admin/index'
 import { Route as mainPathlessIndexRouteImport } from './routes/(main)/_pathless/index'
 import { Route as ApiSongsCoverRouteImport } from './routes/api/songs/cover'
+import { Route as ApiProjectsThumbnailRouteImport } from './routes/api/projects/thumbnail'
 import { Route as ApiMoviesPosterRouteImport } from './routes/api/movies/poster'
 import { Route as ApiGalleryImageRouteImport } from './routes/api/gallery/image'
+import { Route as ApiExperiencesCompanyLogoRouteImport } from './routes/api/experiences/company-logo'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as platformAdminSongsRouteImport } from './routes/(platform)/admin/songs'
 import { Route as platformAdminSettingsRouteImport } from './routes/(platform)/admin/settings'
@@ -66,6 +68,11 @@ const ApiSongsCoverRoute = ApiSongsCoverRouteImport.update({
   path: '/api/songs/cover',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProjectsThumbnailRoute = ApiProjectsThumbnailRouteImport.update({
+  id: '/api/projects/thumbnail',
+  path: '/api/projects/thumbnail',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiMoviesPosterRoute = ApiMoviesPosterRouteImport.update({
   id: '/api/movies/poster',
   path: '/api/movies/poster',
@@ -76,6 +83,12 @@ const ApiGalleryImageRoute = ApiGalleryImageRouteImport.update({
   path: '/api/gallery/image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiExperiencesCompanyLogoRoute =
+  ApiExperiencesCompanyLogoRouteImport.update({
+    id: '/api/experiences/company-logo',
+    path: '/api/experiences/company-logo',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -160,8 +173,10 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/experiences/company-logo': typeof ApiExperiencesCompanyLogoRoute
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
+  '/api/projects/thumbnail': typeof ApiProjectsThumbnailRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin/': typeof platformAdminIndexRoute
@@ -182,8 +197,10 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/experiences/company-logo': typeof ApiExperiencesCompanyLogoRoute
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
+  '/api/projects/thumbnail': typeof ApiProjectsThumbnailRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin': typeof platformAdminIndexRoute
@@ -207,8 +224,10 @@ export interface FileRoutesById {
   '/(platform)/admin/settings': typeof platformAdminSettingsRoute
   '/(platform)/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/experiences/company-logo': typeof ApiExperiencesCompanyLogoRoute
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
+  '/api/projects/thumbnail': typeof ApiProjectsThumbnailRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
   '/(platform)/admin/': typeof platformAdminIndexRoute
@@ -232,8 +251,10 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/experiences/company-logo'
     | '/api/gallery/image'
     | '/api/movies/poster'
+    | '/api/projects/thumbnail'
     | '/api/songs/cover'
     | '/'
     | '/admin/'
@@ -254,8 +275,10 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/experiences/company-logo'
     | '/api/gallery/image'
     | '/api/movies/poster'
+    | '/api/projects/thumbnail'
     | '/api/songs/cover'
     | '/'
     | '/admin'
@@ -278,8 +301,10 @@ export interface FileRouteTypes {
     | '/(platform)/admin/settings'
     | '/(platform)/admin/songs'
     | '/api/auth/$'
+    | '/api/experiences/company-logo'
     | '/api/gallery/image'
     | '/api/movies/poster'
+    | '/api/projects/thumbnail'
     | '/api/songs/cover'
     | '/(main)/_pathless/'
     | '/(platform)/admin/'
@@ -291,8 +316,10 @@ export interface RootRouteChildren {
   platformAdminRouteRoute: typeof platformAdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiExperiencesCompanyLogoRoute: typeof ApiExperiencesCompanyLogoRoute
   ApiGalleryImageRoute: typeof ApiGalleryImageRoute
   ApiMoviesPosterRoute: typeof ApiMoviesPosterRoute
+  ApiProjectsThumbnailRoute: typeof ApiProjectsThumbnailRoute
   ApiSongsCoverRoute: typeof ApiSongsCoverRoute
 }
 
@@ -347,6 +374,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSongsCoverRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/projects/thumbnail': {
+      id: '/api/projects/thumbnail'
+      path: '/api/projects/thumbnail'
+      fullPath: '/api/projects/thumbnail'
+      preLoaderRoute: typeof ApiProjectsThumbnailRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/movies/poster': {
       id: '/api/movies/poster'
       path: '/api/movies/poster'
@@ -359,6 +393,13 @@ declare module '@tanstack/react-router' {
       path: '/api/gallery/image'
       fullPath: '/api/gallery/image'
       preLoaderRoute: typeof ApiGalleryImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/experiences/company-logo': {
+      id: '/api/experiences/company-logo'
+      path: '/api/experiences/company-logo'
+      fullPath: '/api/experiences/company-logo'
+      preLoaderRoute: typeof ApiExperiencesCompanyLogoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -507,8 +548,10 @@ const rootRouteChildren: RootRouteChildren = {
   platformAdminRouteRoute: platformAdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiExperiencesCompanyLogoRoute: ApiExperiencesCompanyLogoRoute,
   ApiGalleryImageRoute: ApiGalleryImageRoute,
   ApiMoviesPosterRoute: ApiMoviesPosterRoute,
+  ApiProjectsThumbnailRoute: ApiProjectsThumbnailRoute,
   ApiSongsCoverRoute: ApiSongsCoverRoute,
 }
 export const routeTree = rootRouteImport
