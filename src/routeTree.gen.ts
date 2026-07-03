@@ -19,6 +19,7 @@ import { Route as ApiProjectsThumbnailRouteImport } from './routes/api/projects/
 import { Route as ApiMoviesPosterRouteImport } from './routes/api/movies/poster'
 import { Route as ApiGalleryImageRouteImport } from './routes/api/gallery/image'
 import { Route as ApiExperiencesCompanyLogoRouteImport } from './routes/api/experiences/company-logo'
+import { Route as ApiBlogsCoverRouteImport } from './routes/api/blogs/cover'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as platformAdminSongsRouteImport } from './routes/(platform)/admin/songs'
 import { Route as platformAdminSettingsRouteImport } from './routes/(platform)/admin/settings'
@@ -32,6 +33,8 @@ import { Route as platformAdminBlogsRouteImport } from './routes/(platform)/admi
 import { Route as mainPathlessBlogRouteImport } from './routes/(main)/_pathless/blog'
 import { Route as mainPathlessArchivesRouteImport } from './routes/(main)/_pathless/archives'
 import { Route as mainPathlessAboutRouteImport } from './routes/(main)/_pathless/about'
+import { Route as platformAdminBlogsCreateRouteImport } from './routes/(platform)/admin/blogs.create'
+import { Route as platformAdminBlogsEditSlugRouteImport } from './routes/(platform)/admin/blogs.edit.$slug'
 
 const authLoginRoute = authLoginRouteImport.update({
   id: '/(auth)/login',
@@ -83,6 +86,11 @@ const ApiExperiencesCompanyLogoRoute =
     path: '/api/experiences/company-logo',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiBlogsCoverRoute = ApiBlogsCoverRouteImport.update({
+  id: '/api/blogs/cover',
+  path: '/api/blogs/cover',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -149,6 +157,18 @@ const mainPathlessAboutRoute = mainPathlessAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => mainPathlessRouteRoute,
 } as any)
+const platformAdminBlogsCreateRoute =
+  platformAdminBlogsCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => platformAdminBlogsRoute,
+  } as any)
+const platformAdminBlogsEditSlugRoute =
+  platformAdminBlogsEditSlugRouteImport.update({
+    id: '/edit/$slug',
+    path: '/edit/$slug',
+    getParentRoute: () => platformAdminBlogsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/admin': typeof platformAdminRouteRouteWithChildren
@@ -156,7 +176,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
   '/blog': typeof mainPathlessBlogRoute
-  '/admin/blogs': typeof platformAdminBlogsRoute
+  '/admin/blogs': typeof platformAdminBlogsRouteWithChildren
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
   '/admin/gallery': typeof platformAdminGalleryRoute
@@ -166,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/blogs/cover': typeof ApiBlogsCoverRoute
   '/api/experiences/company-logo': typeof ApiExperiencesCompanyLogoRoute
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
@@ -173,13 +194,15 @@ export interface FileRoutesByFullPath {
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin/': typeof platformAdminIndexRoute
+  '/admin/blogs/create': typeof platformAdminBlogsCreateRoute
+  '/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
   '/blog': typeof mainPathlessBlogRoute
-  '/admin/blogs': typeof platformAdminBlogsRoute
+  '/admin/blogs': typeof platformAdminBlogsRouteWithChildren
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
   '/admin/gallery': typeof platformAdminGalleryRoute
@@ -189,6 +212,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof platformAdminSettingsRoute
   '/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/blogs/cover': typeof ApiBlogsCoverRoute
   '/api/experiences/company-logo': typeof ApiExperiencesCompanyLogoRoute
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
@@ -196,6 +220,8 @@ export interface FileRoutesByTo {
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin': typeof platformAdminIndexRoute
+  '/admin/blogs/create': typeof platformAdminBlogsCreateRoute
+  '/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -205,7 +231,7 @@ export interface FileRoutesById {
   '/(main)/_pathless/about': typeof mainPathlessAboutRoute
   '/(main)/_pathless/archives': typeof mainPathlessArchivesRoute
   '/(main)/_pathless/blog': typeof mainPathlessBlogRoute
-  '/(platform)/admin/blogs': typeof platformAdminBlogsRoute
+  '/(platform)/admin/blogs': typeof platformAdminBlogsRouteWithChildren
   '/(platform)/admin/dashboard': typeof platformAdminDashboardRoute
   '/(platform)/admin/experiences': typeof platformAdminExperiencesRoute
   '/(platform)/admin/gallery': typeof platformAdminGalleryRoute
@@ -215,6 +241,7 @@ export interface FileRoutesById {
   '/(platform)/admin/settings': typeof platformAdminSettingsRoute
   '/(platform)/admin/songs': typeof platformAdminSongsRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/blogs/cover': typeof ApiBlogsCoverRoute
   '/api/experiences/company-logo': typeof ApiExperiencesCompanyLogoRoute
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
@@ -222,6 +249,8 @@ export interface FileRoutesById {
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
   '/(platform)/admin/': typeof platformAdminIndexRoute
+  '/(platform)/admin/blogs/create': typeof platformAdminBlogsCreateRoute
+  '/(platform)/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +270,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/blogs/cover'
     | '/api/experiences/company-logo'
     | '/api/gallery/image'
     | '/api/movies/poster'
@@ -248,6 +278,8 @@ export interface FileRouteTypes {
     | '/api/songs/cover'
     | '/'
     | '/admin/'
+    | '/admin/blogs/create'
+    | '/admin/blogs/edit/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -264,6 +296,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/songs'
     | '/api/auth/$'
+    | '/api/blogs/cover'
     | '/api/experiences/company-logo'
     | '/api/gallery/image'
     | '/api/movies/poster'
@@ -271,6 +304,8 @@ export interface FileRouteTypes {
     | '/api/songs/cover'
     | '/'
     | '/admin'
+    | '/admin/blogs/create'
+    | '/admin/blogs/edit/$slug'
   id:
     | '__root__'
     | '/(main)/_pathless'
@@ -289,6 +324,7 @@ export interface FileRouteTypes {
     | '/(platform)/admin/settings'
     | '/(platform)/admin/songs'
     | '/api/auth/$'
+    | '/api/blogs/cover'
     | '/api/experiences/company-logo'
     | '/api/gallery/image'
     | '/api/movies/poster'
@@ -296,6 +332,8 @@ export interface FileRouteTypes {
     | '/api/songs/cover'
     | '/(main)/_pathless/'
     | '/(platform)/admin/'
+    | '/(platform)/admin/blogs/create'
+    | '/(platform)/admin/blogs/edit/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -303,6 +341,7 @@ export interface RootRouteChildren {
   platformAdminRouteRoute: typeof platformAdminRouteRouteWithChildren
   authLoginRoute: typeof authLoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiBlogsCoverRoute: typeof ApiBlogsCoverRoute
   ApiExperiencesCompanyLogoRoute: typeof ApiExperiencesCompanyLogoRoute
   ApiGalleryImageRoute: typeof ApiGalleryImageRoute
   ApiMoviesPosterRoute: typeof ApiMoviesPosterRoute
@@ -380,6 +419,13 @@ declare module '@tanstack/react-router' {
       path: '/api/experiences/company-logo'
       fullPath: '/api/experiences/company-logo'
       preLoaderRoute: typeof ApiExperiencesCompanyLogoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/blogs/cover': {
+      id: '/api/blogs/cover'
+      path: '/api/blogs/cover'
+      fullPath: '/api/blogs/cover'
+      preLoaderRoute: typeof ApiBlogsCoverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -473,6 +519,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainPathlessAboutRouteImport
       parentRoute: typeof mainPathlessRouteRoute
     }
+    '/(platform)/admin/blogs/create': {
+      id: '/(platform)/admin/blogs/create'
+      path: '/create'
+      fullPath: '/admin/blogs/create'
+      preLoaderRoute: typeof platformAdminBlogsCreateRouteImport
+      parentRoute: typeof platformAdminBlogsRoute
+    }
+    '/(platform)/admin/blogs/edit/$slug': {
+      id: '/(platform)/admin/blogs/edit/$slug'
+      path: '/edit/$slug'
+      fullPath: '/admin/blogs/edit/$slug'
+      preLoaderRoute: typeof platformAdminBlogsEditSlugRouteImport
+      parentRoute: typeof platformAdminBlogsRoute
+    }
   }
 }
 
@@ -493,8 +553,21 @@ const mainPathlessRouteRouteChildren: mainPathlessRouteRouteChildren = {
 const mainPathlessRouteRouteWithChildren =
   mainPathlessRouteRoute._addFileChildren(mainPathlessRouteRouteChildren)
 
+interface platformAdminBlogsRouteChildren {
+  platformAdminBlogsCreateRoute: typeof platformAdminBlogsCreateRoute
+  platformAdminBlogsEditSlugRoute: typeof platformAdminBlogsEditSlugRoute
+}
+
+const platformAdminBlogsRouteChildren: platformAdminBlogsRouteChildren = {
+  platformAdminBlogsCreateRoute: platformAdminBlogsCreateRoute,
+  platformAdminBlogsEditSlugRoute: platformAdminBlogsEditSlugRoute,
+}
+
+const platformAdminBlogsRouteWithChildren =
+  platformAdminBlogsRoute._addFileChildren(platformAdminBlogsRouteChildren)
+
 interface platformAdminRouteRouteChildren {
-  platformAdminBlogsRoute: typeof platformAdminBlogsRoute
+  platformAdminBlogsRoute: typeof platformAdminBlogsRouteWithChildren
   platformAdminDashboardRoute: typeof platformAdminDashboardRoute
   platformAdminExperiencesRoute: typeof platformAdminExperiencesRoute
   platformAdminGalleryRoute: typeof platformAdminGalleryRoute
@@ -507,7 +580,7 @@ interface platformAdminRouteRouteChildren {
 }
 
 const platformAdminRouteRouteChildren: platformAdminRouteRouteChildren = {
-  platformAdminBlogsRoute: platformAdminBlogsRoute,
+  platformAdminBlogsRoute: platformAdminBlogsRouteWithChildren,
   platformAdminDashboardRoute: platformAdminDashboardRoute,
   platformAdminExperiencesRoute: platformAdminExperiencesRoute,
   platformAdminGalleryRoute: platformAdminGalleryRoute,
@@ -527,6 +600,7 @@ const rootRouteChildren: RootRouteChildren = {
   platformAdminRouteRoute: platformAdminRouteRouteWithChildren,
   authLoginRoute: authLoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiBlogsCoverRoute: ApiBlogsCoverRoute,
   ApiExperiencesCompanyLogoRoute: ApiExperiencesCompanyLogoRoute,
   ApiGalleryImageRoute: ApiGalleryImageRoute,
   ApiMoviesPosterRoute: ApiMoviesPosterRoute,

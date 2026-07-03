@@ -408,7 +408,9 @@ export const blogs = pgTable(
     coverImage: text("cover_image"),
 
     // Bisa markdown dulu, lalu nanti mdx.
-    contentType: blogContentTypeEnum("content_type").default("mdx").notNull(),
+    contentType: blogContentTypeEnum("content_type")
+      .default("markdown")
+      .notNull(),
 
     // Isi markdown / mdx disimpan di sini.
     content: text("content").notNull(),

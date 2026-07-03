@@ -1,9 +1,24 @@
-import { TitleText } from "#/components/title-text";
+import { BlogsTableList } from "./blogs-table-list";
 
-export default function BlogsAdmin() {
-  return (
-    <section className="flex flex-col gap-4">
-      <TitleText>Blogs</TitleText>
-    </section>
-  );
+type BlogsAdminProps = {
+	blogs?: Array<{
+		id: string;
+		title: string;
+		slug: string;
+		excerpt: string | null;
+		coverImage: string | null;
+		contentType: string;
+		content: string;
+		status: string;
+		tags: string[];
+		readingTime: number | null;
+		publishedAt: Date | null;
+		isFeatured: boolean;
+		createdAt: Date;
+		updatedAt: Date;
+	}>;
+};
+
+export default function BlogsAdmin({ blogs = [] }: BlogsAdminProps) {
+	return <BlogsTableList data={blogs} />;
 }
