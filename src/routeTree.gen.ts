@@ -33,7 +33,9 @@ import { Route as platformAdminBlogsRouteImport } from './routes/(platform)/admi
 import { Route as mainPathlessBlogRouteImport } from './routes/(main)/_pathless/blog'
 import { Route as mainPathlessArchivesRouteImport } from './routes/(main)/_pathless/archives'
 import { Route as mainPathlessAboutRouteImport } from './routes/(main)/_pathless/about'
+import { Route as platformAdminJobTrackerCreateRouteImport } from './routes/(platform)/admin/job-tracker.create'
 import { Route as platformAdminBlogsCreateRouteImport } from './routes/(platform)/admin/blogs.create'
+import { Route as platformAdminJobTrackerEditIdRouteImport } from './routes/(platform)/admin/job-tracker.edit.$id'
 import { Route as platformAdminBlogsEditSlugRouteImport } from './routes/(platform)/admin/blogs.edit.$slug'
 
 const authLoginRoute = authLoginRouteImport.update({
@@ -157,11 +159,23 @@ const mainPathlessAboutRoute = mainPathlessAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => mainPathlessRouteRoute,
 } as any)
+const platformAdminJobTrackerCreateRoute =
+  platformAdminJobTrackerCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => platformAdminJobTrackerRoute,
+  } as any)
 const platformAdminBlogsCreateRoute =
   platformAdminBlogsCreateRouteImport.update({
     id: '/create',
     path: '/create',
     getParentRoute: () => platformAdminBlogsRoute,
+  } as any)
+const platformAdminJobTrackerEditIdRoute =
+  platformAdminJobTrackerEditIdRouteImport.update({
+    id: '/edit/$id',
+    path: '/edit/$id',
+    getParentRoute: () => platformAdminJobTrackerRoute,
   } as any)
 const platformAdminBlogsEditSlugRoute =
   platformAdminBlogsEditSlugRouteImport.update({
@@ -180,7 +194,7 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
   '/admin/gallery': typeof platformAdminGalleryRoute
-  '/admin/job-tracker': typeof platformAdminJobTrackerRoute
+  '/admin/job-tracker': typeof platformAdminJobTrackerRouteWithChildren
   '/admin/movies': typeof platformAdminMoviesRoute
   '/admin/projects': typeof platformAdminProjectsRoute
   '/admin/settings': typeof platformAdminSettingsRoute
@@ -195,7 +209,9 @@ export interface FileRoutesByFullPath {
   '/': typeof mainPathlessIndexRoute
   '/admin/': typeof platformAdminIndexRoute
   '/admin/blogs/create': typeof platformAdminBlogsCreateRoute
+  '/admin/job-tracker/create': typeof platformAdminJobTrackerCreateRoute
   '/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
+  '/admin/job-tracker/edit/$id': typeof platformAdminJobTrackerEditIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
@@ -206,7 +222,7 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
   '/admin/gallery': typeof platformAdminGalleryRoute
-  '/admin/job-tracker': typeof platformAdminJobTrackerRoute
+  '/admin/job-tracker': typeof platformAdminJobTrackerRouteWithChildren
   '/admin/movies': typeof platformAdminMoviesRoute
   '/admin/projects': typeof platformAdminProjectsRoute
   '/admin/settings': typeof platformAdminSettingsRoute
@@ -221,7 +237,9 @@ export interface FileRoutesByTo {
   '/': typeof mainPathlessIndexRoute
   '/admin': typeof platformAdminIndexRoute
   '/admin/blogs/create': typeof platformAdminBlogsCreateRoute
+  '/admin/job-tracker/create': typeof platformAdminJobTrackerCreateRoute
   '/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
+  '/admin/job-tracker/edit/$id': typeof platformAdminJobTrackerEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -235,7 +253,7 @@ export interface FileRoutesById {
   '/(platform)/admin/dashboard': typeof platformAdminDashboardRoute
   '/(platform)/admin/experiences': typeof platformAdminExperiencesRoute
   '/(platform)/admin/gallery': typeof platformAdminGalleryRoute
-  '/(platform)/admin/job-tracker': typeof platformAdminJobTrackerRoute
+  '/(platform)/admin/job-tracker': typeof platformAdminJobTrackerRouteWithChildren
   '/(platform)/admin/movies': typeof platformAdminMoviesRoute
   '/(platform)/admin/projects': typeof platformAdminProjectsRoute
   '/(platform)/admin/settings': typeof platformAdminSettingsRoute
@@ -250,7 +268,9 @@ export interface FileRoutesById {
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
   '/(platform)/admin/': typeof platformAdminIndexRoute
   '/(platform)/admin/blogs/create': typeof platformAdminBlogsCreateRoute
+  '/(platform)/admin/job-tracker/create': typeof platformAdminJobTrackerCreateRoute
   '/(platform)/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
+  '/(platform)/admin/job-tracker/edit/$id': typeof platformAdminJobTrackerEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -279,7 +299,9 @@ export interface FileRouteTypes {
     | '/'
     | '/admin/'
     | '/admin/blogs/create'
+    | '/admin/job-tracker/create'
     | '/admin/blogs/edit/$slug'
+    | '/admin/job-tracker/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -305,7 +327,9 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/admin/blogs/create'
+    | '/admin/job-tracker/create'
     | '/admin/blogs/edit/$slug'
+    | '/admin/job-tracker/edit/$id'
   id:
     | '__root__'
     | '/(main)/_pathless'
@@ -333,7 +357,9 @@ export interface FileRouteTypes {
     | '/(main)/_pathless/'
     | '/(platform)/admin/'
     | '/(platform)/admin/blogs/create'
+    | '/(platform)/admin/job-tracker/create'
     | '/(platform)/admin/blogs/edit/$slug'
+    | '/(platform)/admin/job-tracker/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -519,12 +545,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainPathlessAboutRouteImport
       parentRoute: typeof mainPathlessRouteRoute
     }
+    '/(platform)/admin/job-tracker/create': {
+      id: '/(platform)/admin/job-tracker/create'
+      path: '/create'
+      fullPath: '/admin/job-tracker/create'
+      preLoaderRoute: typeof platformAdminJobTrackerCreateRouteImport
+      parentRoute: typeof platformAdminJobTrackerRoute
+    }
     '/(platform)/admin/blogs/create': {
       id: '/(platform)/admin/blogs/create'
       path: '/create'
       fullPath: '/admin/blogs/create'
       preLoaderRoute: typeof platformAdminBlogsCreateRouteImport
       parentRoute: typeof platformAdminBlogsRoute
+    }
+    '/(platform)/admin/job-tracker/edit/$id': {
+      id: '/(platform)/admin/job-tracker/edit/$id'
+      path: '/edit/$id'
+      fullPath: '/admin/job-tracker/edit/$id'
+      preLoaderRoute: typeof platformAdminJobTrackerEditIdRouteImport
+      parentRoute: typeof platformAdminJobTrackerRoute
     }
     '/(platform)/admin/blogs/edit/$slug': {
       id: '/(platform)/admin/blogs/edit/$slug'
@@ -566,12 +606,28 @@ const platformAdminBlogsRouteChildren: platformAdminBlogsRouteChildren = {
 const platformAdminBlogsRouteWithChildren =
   platformAdminBlogsRoute._addFileChildren(platformAdminBlogsRouteChildren)
 
+interface platformAdminJobTrackerRouteChildren {
+  platformAdminJobTrackerCreateRoute: typeof platformAdminJobTrackerCreateRoute
+  platformAdminJobTrackerEditIdRoute: typeof platformAdminJobTrackerEditIdRoute
+}
+
+const platformAdminJobTrackerRouteChildren: platformAdminJobTrackerRouteChildren =
+  {
+    platformAdminJobTrackerCreateRoute: platformAdminJobTrackerCreateRoute,
+    platformAdminJobTrackerEditIdRoute: platformAdminJobTrackerEditIdRoute,
+  }
+
+const platformAdminJobTrackerRouteWithChildren =
+  platformAdminJobTrackerRoute._addFileChildren(
+    platformAdminJobTrackerRouteChildren,
+  )
+
 interface platformAdminRouteRouteChildren {
   platformAdminBlogsRoute: typeof platformAdminBlogsRouteWithChildren
   platformAdminDashboardRoute: typeof platformAdminDashboardRoute
   platformAdminExperiencesRoute: typeof platformAdminExperiencesRoute
   platformAdminGalleryRoute: typeof platformAdminGalleryRoute
-  platformAdminJobTrackerRoute: typeof platformAdminJobTrackerRoute
+  platformAdminJobTrackerRoute: typeof platformAdminJobTrackerRouteWithChildren
   platformAdminMoviesRoute: typeof platformAdminMoviesRoute
   platformAdminProjectsRoute: typeof platformAdminProjectsRoute
   platformAdminSettingsRoute: typeof platformAdminSettingsRoute
@@ -584,7 +640,7 @@ const platformAdminRouteRouteChildren: platformAdminRouteRouteChildren = {
   platformAdminDashboardRoute: platformAdminDashboardRoute,
   platformAdminExperiencesRoute: platformAdminExperiencesRoute,
   platformAdminGalleryRoute: platformAdminGalleryRoute,
-  platformAdminJobTrackerRoute: platformAdminJobTrackerRoute,
+  platformAdminJobTrackerRoute: platformAdminJobTrackerRouteWithChildren,
   platformAdminMoviesRoute: platformAdminMoviesRoute,
   platformAdminProjectsRoute: platformAdminProjectsRoute,
   platformAdminSettingsRoute: platformAdminSettingsRoute,

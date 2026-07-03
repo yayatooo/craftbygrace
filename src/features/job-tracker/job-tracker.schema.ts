@@ -7,6 +7,11 @@ import {
 	workTypeEnum,
 } from "#/db/schema";
 
+export const jobTypeValues = jobTypeEnum.enumValues;
+export const platformValues = platformEnum.enumValues;
+export const trackerStatusValues = trackerTypeEnum.enumValues;
+export const workTypeValues = workTypeEnum.enumValues;
+
 const defaultJobApplicationStatus =
 	"screening" satisfies (typeof trackerTypeEnum.enumValues)[number];
 

@@ -1,3 +1,4 @@
+import { Link, useRouter } from "@tanstack/react-router";
 import {
 	BriefcaseBusiness,
 	Building2,
@@ -5,10 +6,20 @@ import {
 	FileText,
 	MapPin,
 	MoreHorizontal,
-	Plus,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "#/components/ui/alert-dialog";
 import { Badge } from "#/components/ui/badge";
 import { Button } from "#/components/ui/button";
 import {
@@ -26,6 +37,7 @@ import {
 	DropdownMenuTrigger,
 } from "#/components/ui/dropdown-menu";
 import { Tabs, TabsList, TabsTrigger } from "#/components/ui/tabs";
+import { deleteJobApplicationAction } from "#/features/job-tracker/job-tracker.actions";
 
 import type { JobApplicationItem } from ".";
 
@@ -42,7 +54,11 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 });
 
 export function JobTrackerPage({ applications = [] }: JobTrackerPageProps) {
+	const router = useRouter();
 	const [filter, setFilter] = useState<FilterValue>("all");
+	const [selectedApplication, setSelectedApplication] =
+		useState<JobApplicationItem | null>(null);
+	const [isDeleting, setIsDeleting] = useState(false);
 
 	const total = applications.length;
 	const screening = applications.filter(
@@ -60,69 +76,137 @@ export function JobTrackerPage({ applications = [] }: JobTrackerPageProps) {
 	const active = applications.filter(isActiveApplication).length;
 	const filteredApplications = filterApplications(applications, filter);
 
+	async function handleDelete() {
+		if (!selectedApplication) return;
+
+		const applicationToDelete = selectedApplication;
+
+		setIsDeleting(true);
+
+		try {
+			await deleteJobApplicationAction({
+				id: applicationToDelete.id,
+			});
+
+			toast.success("Job application deleted successfully");
+			setSelectedApplication(null);
+			await router.invalidate();
+		} catch (error) {
+			console.error("Failed to delete job application:", error);
+			toast.error("Failed to delete job application.");
+		} finally {
+			setIsDeleting(false);
+		}
+	}
+
 	return (
-		<div className="w-full space-y-6">
-			<div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-				<div>
-					<h1 className="text-xl font-semibold tracking-tight">Job Tracker</h1>
-					<p className="text-sm text-muted-foreground">
-						Track your job applications, interview progress, CV version, and
-						notes.
-					</p>
+		<>
+			<div className="w-full space-y-6">
+				<div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+					<div>
+						<h1 className="text-xl font-semibold tracking-tight">
+							Job Tracker
+						</h1>
+						<p className="text-sm text-muted-foreground">
+							Track your job applications, interview progress, CV version, and
+							notes.
+						</p>
+					</div>
+
+					<Button className="w-fit text-white">
+						<Link to="/admin/job-tracker/create">
+							{/*<Plus className="size-4" />*/}
+							Add Application
+						</Link>
+					</Button>
 				</div>
 
-				<Button className="w-fit">
-					<Plus className="size-4" />
-					Add Application
-				</Button>
+				<div className="grid gap-4 md:grid-cols-4">
+					<TrackerSummaryCard
+						title="Total Applied"
+						value={total}
+						description="All tracked applications"
+					/>
+					<TrackerSummaryCard
+						title="Screening"
+						value={screening}
+						description="Waiting for first response"
+					/>
+					<TrackerSummaryCard
+						title="Interview"
+						value={interview}
+						description="Interview stage"
+					/>
+					<TrackerSummaryCard
+						title="Accepted"
+						value={accepted}
+						description="Successful applications"
+					/>
+				</div>
+
+				<Tabs
+					value={filter}
+					onValueChange={(value) => setFilter(value as FilterValue)}
+					className="space-y-4"
+				>
+					<div className="flex items-center justify-between gap-4">
+						<TabsList className="rounded-xl">
+							<TabsTrigger value="all">All</TabsTrigger>
+							<TabsTrigger value="active">Active</TabsTrigger>
+							<TabsTrigger value="rejected">Rejected</TabsTrigger>
+						</TabsList>
+
+						<p className="text-sm text-muted-foreground">
+							{rejected} rejected · {active} active
+						</p>
+					</div>
+
+					<JobApplicationList
+						data={filteredApplications}
+						hasApplications={applications.length > 0}
+						onDeleteSelect={setSelectedApplication}
+					/>
+				</Tabs>
 			</div>
 
-			<div className="grid gap-4 md:grid-cols-4">
-				<TrackerSummaryCard
-					title="Total Applied"
-					value={total}
-					description="All tracked applications"
-				/>
-				<TrackerSummaryCard
-					title="Screening"
-					value={screening}
-					description="Waiting for first response"
-				/>
-				<TrackerSummaryCard
-					title="Interview"
-					value={interview}
-					description="Interview stage"
-				/>
-				<TrackerSummaryCard
-					title="Accepted"
-					value={accepted}
-					description="Successful applications"
-				/>
-			</div>
-
-			<Tabs
-				value={filter}
-				onValueChange={(value) => setFilter(value as FilterValue)}
-				className="space-y-4"
+			<AlertDialog
+				open={Boolean(selectedApplication)}
+				onOpenChange={(open) => {
+					if (!open && !isDeleting) setSelectedApplication(null);
+				}}
 			>
-				<div className="flex items-center justify-between gap-4">
-					<TabsList className="rounded-xl">
-						<TabsTrigger value="all">All</TabsTrigger>
-						<TabsTrigger value="active">Active</TabsTrigger>
-						<TabsTrigger value="rejected">Rejected</TabsTrigger>
-					</TabsList>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete application?</AlertDialogTitle>
+						<AlertDialogDescription>
+							This will permanently delete{" "}
+							<span className="font-medium text-foreground">
+								{selectedApplication?.name}
+							</span>{" "}
+							at{" "}
+							<span className="font-medium text-foreground">
+								{selectedApplication?.company}
+							</span>
+							. This action cannot be undone.
+						</AlertDialogDescription>
+					</AlertDialogHeader>
 
-					<p className="text-sm text-muted-foreground">
-						{rejected} rejected · {active} active
-					</p>
-				</div>
-
-				<JobApplicationList
-					data={filteredApplications}
-					hasApplications={applications.length > 0}
-				/>
-			</Tabs>
-		</div>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+						<AlertDialogAction
+							onClick={(event) => {
+								event.preventDefault();
+								void handleDelete();
+							}}
+							disabled={isDeleting}
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+						>
+							{isDeleting ? "Deleting..." : "Delete"}
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
+		</>
 	);
 }
 
@@ -151,9 +235,11 @@ function TrackerSummaryCard({
 export function JobApplicationList({
 	data,
 	hasApplications,
+	onDeleteSelect,
 }: {
 	data: JobApplicationItem[];
 	hasApplications: boolean;
+	onDeleteSelect: (application: JobApplicationItem) => void;
 }) {
 	if (data.length === 0) {
 		return (
@@ -170,7 +256,11 @@ export function JobApplicationList({
 	return (
 		<div className="grid gap-4">
 			{data.map((application) => (
-				<JobApplicationCard key={application.id} application={application} />
+				<JobApplicationCard
+					key={application.id}
+					application={application}
+					onDeleteSelect={onDeleteSelect}
+				/>
 			))}
 		</div>
 	);
@@ -178,8 +268,10 @@ export function JobApplicationList({
 
 function JobApplicationCard({
 	application,
+	onDeleteSelect,
 }: {
 	application: JobApplicationItem;
+	onDeleteSelect: (application: JobApplicationItem) => void;
 }) {
 	return (
 		<Card className="rounded-2xl shadow-none transition-colors hover:bg-muted/30">
@@ -264,20 +356,19 @@ function JobApplicationCard({
 									<BriefcaseBusiness className="mr-2 size-4" />
 									Update Status
 								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() =>
-										console.log("Edit placeholder", application.id)
-									}
-								>
-									<FileText className="mr-2 size-4" />
-									Edit
+								<DropdownMenuItem asChild>
+									<Link
+										to="/admin/job-tracker/edit/$id"
+										params={{ id: application.id }}
+									>
+										<FileText className="mr-2 size-4" />
+										Edit
+									</Link>
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem
 									className="text-destructive focus:text-destructive"
-									onClick={() =>
-										console.log("Delete placeholder", application.id)
-									}
+									onClick={() => onDeleteSelect(application)}
 								>
 									Delete
 								</DropdownMenuItem>

@@ -11,6 +11,7 @@ import {
 import {
 	createJobApplication,
 	deleteJobApplication,
+	getJobApplicationById,
 	getJobApplications,
 	updateJobApplication,
 	updateJobApplicationStatus,
@@ -22,6 +23,15 @@ export const getJobApplicationsFn = createServerFn({
 	.middleware([requireOwnerMiddleware])
 	.handler(async () => {
 		return getJobApplications();
+	});
+
+export const getJobApplicationByIdFn = createServerFn({
+	method: "GET",
+})
+	.middleware([requireOwnerMiddleware])
+	.validator(jobApplicationIdSchema)
+	.handler(async ({ data }) => {
+		return getJobApplicationById(data.id);
 	});
 
 export const createJobApplicationFn = createServerFn({

@@ -9,6 +9,16 @@ export async function getJobApplications() {
 	return db.select().from(jobTracker).orderBy(desc(jobTracker.createdAt));
 }
 
+export async function getJobApplicationById(id: string) {
+	const [application] = await db
+		.select()
+		.from(jobTracker)
+		.where(eq(jobTracker.id, id))
+		.limit(1);
+
+	return application ?? null;
+}
+
 export async function createJobApplication(data: JobApplicationInput) {
 	const [application] = await db
 		.insert(jobTracker)
