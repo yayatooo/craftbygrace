@@ -78,11 +78,14 @@ export const user = pgTable(
     emailVerified: boolean("email_verified").default(false).notNull(),
 
     image: text("image"),
+    imageKey: text("image_key"),
 
     username: varchar("username", { length: 80 }),
+    headline: varchar("headline", { length: 160 }),
     bio: text("bio"),
 
     isOwner: boolean("is_owner").default(false).notNull(),
+    isVerified: boolean("is_verified").default(false).notNull(),
 
     createdAt: timestamp("created_at", { withTimezone: true })
       .defaultNow()
@@ -204,6 +207,40 @@ export const verification = pgTable(
       .notNull(),
   },
   (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
+
+// =============================
+// SKILLS
+// =============================
+
+export const skills = pgTable(
+  "skills",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    name: varchar("name", { length: 100 }).notNull(),
+    slug: varchar("slug", { length: 120 }).notNull(),
+
+    icon: text("icon").notNull(),
+    iconKey: text("icon_key"),
+
+    isActive: boolean("is_active").default(true).notNull(),
+
+    order: integer("order").default(0).notNull(),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("skills_slug_unique").on(table.slug),
+    index("skills_active_idx").on(table.isActive),
+    index("skills_order_idx").on(table.order),
+  ],
 );
 
 // =============================

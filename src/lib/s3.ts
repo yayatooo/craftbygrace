@@ -33,6 +33,8 @@ export type UploadFolder =
   | "projects"
   | "experiences"
   | "songs"
+  | "profile"
+  | "skills"
   | "avatars"
   | "blogs";
 

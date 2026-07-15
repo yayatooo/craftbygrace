@@ -15,6 +15,9 @@ import { Route as mainPathlessRouteRouteImport } from './routes/(main)/_pathless
 import { Route as platformAdminIndexRouteImport } from './routes/(platform)/admin/index'
 import { Route as mainPathlessIndexRouteImport } from './routes/(main)/_pathless/index'
 import { Route as ApiSongsCoverRouteImport } from './routes/api/songs/cover'
+import { Route as ApiSettingsSkillIconRouteImport } from './routes/api/settings/skill-icon'
+import { Route as ApiSettingsProfileImageRouteImport } from './routes/api/settings/profile-image'
+import { Route as ApiSettingsObjectRouteImport } from './routes/api/settings/object'
 import { Route as ApiProjectsThumbnailRouteImport } from './routes/api/projects/thumbnail'
 import { Route as ApiMoviesPosterRouteImport } from './routes/api/movies/poster'
 import { Route as ApiGalleryImageRouteImport } from './routes/api/gallery/image'
@@ -65,6 +68,21 @@ const mainPathlessIndexRoute = mainPathlessIndexRouteImport.update({
 const ApiSongsCoverRoute = ApiSongsCoverRouteImport.update({
   id: '/api/songs/cover',
   path: '/api/songs/cover',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSettingsSkillIconRoute = ApiSettingsSkillIconRouteImport.update({
+  id: '/api/settings/skill-icon',
+  path: '/api/settings/skill-icon',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSettingsProfileImageRoute = ApiSettingsProfileImageRouteImport.update({
+  id: '/api/settings/profile-image',
+  path: '/api/settings/profile-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSettingsObjectRoute = ApiSettingsObjectRouteImport.update({
+  id: '/api/settings/object',
+  path: '/api/settings/object',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiProjectsThumbnailRoute = ApiProjectsThumbnailRouteImport.update({
@@ -205,6 +223,9 @@ export interface FileRoutesByFullPath {
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/api/projects/thumbnail': typeof ApiProjectsThumbnailRoute
+  '/api/settings/object': typeof ApiSettingsObjectRoute
+  '/api/settings/profile-image': typeof ApiSettingsProfileImageRoute
+  '/api/settings/skill-icon': typeof ApiSettingsSkillIconRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin/': typeof platformAdminIndexRoute
@@ -233,6 +254,9 @@ export interface FileRoutesByTo {
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/api/projects/thumbnail': typeof ApiProjectsThumbnailRoute
+  '/api/settings/object': typeof ApiSettingsObjectRoute
+  '/api/settings/profile-image': typeof ApiSettingsProfileImageRoute
+  '/api/settings/skill-icon': typeof ApiSettingsSkillIconRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin': typeof platformAdminIndexRoute
@@ -264,6 +288,9 @@ export interface FileRoutesById {
   '/api/gallery/image': typeof ApiGalleryImageRoute
   '/api/movies/poster': typeof ApiMoviesPosterRoute
   '/api/projects/thumbnail': typeof ApiProjectsThumbnailRoute
+  '/api/settings/object': typeof ApiSettingsObjectRoute
+  '/api/settings/profile-image': typeof ApiSettingsProfileImageRoute
+  '/api/settings/skill-icon': typeof ApiSettingsSkillIconRoute
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
   '/(platform)/admin/': typeof platformAdminIndexRoute
@@ -295,6 +322,9 @@ export interface FileRouteTypes {
     | '/api/gallery/image'
     | '/api/movies/poster'
     | '/api/projects/thumbnail'
+    | '/api/settings/object'
+    | '/api/settings/profile-image'
+    | '/api/settings/skill-icon'
     | '/api/songs/cover'
     | '/'
     | '/admin/'
@@ -323,6 +353,9 @@ export interface FileRouteTypes {
     | '/api/gallery/image'
     | '/api/movies/poster'
     | '/api/projects/thumbnail'
+    | '/api/settings/object'
+    | '/api/settings/profile-image'
+    | '/api/settings/skill-icon'
     | '/api/songs/cover'
     | '/'
     | '/admin'
@@ -353,6 +386,9 @@ export interface FileRouteTypes {
     | '/api/gallery/image'
     | '/api/movies/poster'
     | '/api/projects/thumbnail'
+    | '/api/settings/object'
+    | '/api/settings/profile-image'
+    | '/api/settings/skill-icon'
     | '/api/songs/cover'
     | '/(main)/_pathless/'
     | '/(platform)/admin/'
@@ -372,6 +408,9 @@ export interface RootRouteChildren {
   ApiGalleryImageRoute: typeof ApiGalleryImageRoute
   ApiMoviesPosterRoute: typeof ApiMoviesPosterRoute
   ApiProjectsThumbnailRoute: typeof ApiProjectsThumbnailRoute
+  ApiSettingsObjectRoute: typeof ApiSettingsObjectRoute
+  ApiSettingsProfileImageRoute: typeof ApiSettingsProfileImageRoute
+  ApiSettingsSkillIconRoute: typeof ApiSettingsSkillIconRoute
   ApiSongsCoverRoute: typeof ApiSongsCoverRoute
 }
 
@@ -417,6 +456,27 @@ declare module '@tanstack/react-router' {
       path: '/api/songs/cover'
       fullPath: '/api/songs/cover'
       preLoaderRoute: typeof ApiSongsCoverRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/settings/skill-icon': {
+      id: '/api/settings/skill-icon'
+      path: '/api/settings/skill-icon'
+      fullPath: '/api/settings/skill-icon'
+      preLoaderRoute: typeof ApiSettingsSkillIconRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/settings/profile-image': {
+      id: '/api/settings/profile-image'
+      path: '/api/settings/profile-image'
+      fullPath: '/api/settings/profile-image'
+      preLoaderRoute: typeof ApiSettingsProfileImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/settings/object': {
+      id: '/api/settings/object'
+      path: '/api/settings/object'
+      fullPath: '/api/settings/object'
+      preLoaderRoute: typeof ApiSettingsObjectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/projects/thumbnail': {
@@ -661,6 +721,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGalleryImageRoute: ApiGalleryImageRoute,
   ApiMoviesPosterRoute: ApiMoviesPosterRoute,
   ApiProjectsThumbnailRoute: ApiProjectsThumbnailRoute,
+  ApiSettingsObjectRoute: ApiSettingsObjectRoute,
+  ApiSettingsProfileImageRoute: ApiSettingsProfileImageRoute,
+  ApiSettingsSkillIconRoute: ApiSettingsSkillIconRoute,
   ApiSongsCoverRoute: ApiSongsCoverRoute,
 }
 export const routeTree = rootRouteImport
