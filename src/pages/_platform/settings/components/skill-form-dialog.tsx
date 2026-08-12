@@ -25,7 +25,12 @@ import { skillFieldsSchema } from "#/features/settings/skills.schema";
 import type { SkillItem } from "./skills-table";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
+const ALLOWED_IMAGE_TYPES = [
+	"image/png",
+	"image/jpeg",
+	"image/webp",
+	"image/svg+xml",
+];
 
 type SkillFormDialogProps = {
 	skill: SkillItem | null;
@@ -128,7 +133,7 @@ export function SkillFormDialog({
 	function setSelectedIcon(file: File) {
 		if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
 			resetSelectedIcon();
-			toast.error("Skill icon must be a PNG, JPG, or WEBP image.");
+			toast.error("Skill icon must be a PNG, JPG, WEBP, or SVG image.");
 			return;
 		}
 
@@ -286,7 +291,7 @@ export function SkillFormDialog({
 												: "Choose skill icon")}
 									</p>
 									<p className="text-xs text-muted-foreground">
-										PNG, JPG, WEBP up to 5MB
+										PNG, JPG, WEBP, SVG up to 5MB
 									</p>
 								</div>
 
@@ -294,7 +299,7 @@ export function SkillFormDialog({
 									id="skill-icon"
 									name="skillIconFile"
 									type="file"
-									accept="image/png,image/jpeg,image/webp"
+									accept="image/png,image/jpeg,image/webp,image/svg+xml"
 									className="hidden"
 									onChange={handleIconChange}
 									ref={fileInputRef}

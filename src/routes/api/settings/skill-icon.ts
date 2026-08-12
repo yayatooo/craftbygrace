@@ -8,7 +8,12 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const uuidPattern =
 	/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-const allowedImageTypes = new Set(["image/png", "image/jpeg", "image/webp"]);
+const allowedImageTypes = new Set([
+	"image/png",
+	"image/jpeg",
+	"image/webp",
+	"image/svg+xml",
+]);
 
 function json(data: unknown, status = 200) {
 	return Response.json(data, { status });
@@ -42,7 +47,7 @@ export const Route = createFileRoute("/api/settings/skill-icon")({
 
 				if (!allowedImageTypes.has(skillIconFile.type)) {
 					return json(
-						{ error: "Skill icon must be a PNG, JPG, or WEBP image." },
+						{ error: "Skill icon must be a PNG, JPG, WEBP, or SVG image." },
 						400,
 					);
 				}
