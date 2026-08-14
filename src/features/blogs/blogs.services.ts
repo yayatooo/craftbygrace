@@ -1,4 +1,4 @@
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, lte, sql } from "drizzle-orm";
 
 import { db } from "#/db";
 import { blogs } from "#/db/schema";
@@ -48,6 +48,59 @@ export async function getBlogBySlug(slug: string) {
 
 	return blog ?? null;
 }
+
+export async function getPublishedBlogs() {
+	return db
+		.select({
+			id: blogs.id,
+			title: blogs.title,
+			slug: blogs.slug,
+			excerpt: blogs.excerpt,
+			coverImage: blogs.coverImage,
+			tags: blogs.tags,
+			readingTime: blogs.readingTime,
+			publishedAt: blogs.publishedAt,
+			isFeatured: blogs.isFeatured,
+		})
+		.from(blogs)
+		.where(
+			and(eq(blogs.status, "published"), lte(blogs.publishedAt, new Date())),
+		)
+		.orderBy(desc(blogs.isFeatured), desc(blogs.publishedAt));
+}
+
+export async function getPublishedBlogBySlug(slug: string) {
+	const [blog] = await db
+		.select({
+			id: blogs.id,
+			title: blogs.title,
+			slug: blogs.slug,
+			excerpt: blogs.excerpt,
+			coverImage: blogs.coverImage,
+			contentType: blogs.contentType,
+			content: blogs.content,
+			tags: blogs.tags,
+			readingTime: blogs.readingTime,
+			publishedAt: blogs.publishedAt,
+			updatedAt: blogs.updatedAt,
+		})
+		.from(blogs)
+		.where(
+			and(
+				eq(blogs.slug, slug),
+				eq(blogs.status, "published"),
+				lte(blogs.publishedAt, new Date()),
+			),
+		)
+		.limit(1);
+
+	return blog ?? null;
+}
+
+export type PublishedBlogList = Awaited<ReturnType<typeof getPublishedBlogs>>;
+export type PublishedBlog = NonNullable<
+	Awaited<ReturnType<typeof getPublishedBlogBySlug>>
+>;
 
 export async function createBlog(data: BlogInput) {
 	const [blog] = await db

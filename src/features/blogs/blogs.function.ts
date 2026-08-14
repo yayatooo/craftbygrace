@@ -13,8 +13,18 @@ import {
 	deleteBlog,
 	getBlogBySlug,
 	getBlogs,
+	getPublishedBlogBySlug,
+	getPublishedBlogs,
 	updateBlog,
 } from "./blogs.services";
+
+export const getPublishedBlogsFn = createServerFn({ method: "GET" }).handler(
+	async () => getPublishedBlogs(),
+);
+
+export const getPublishedBlogBySlugFn = createServerFn({ method: "GET" })
+	.validator(blogSlugSchema)
+	.handler(async ({ data }) => getPublishedBlogBySlug(data.slug));
 
 export const getBlogsFn = createServerFn({
 	method: "GET",

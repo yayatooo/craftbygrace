@@ -35,7 +35,11 @@ const navItems: NavItem[] = [
 
 export function DockNav() {
 	const { pathname } = useLocation();
-	const activeIndex = navItems.findIndex((item) => item.href === pathname);
+	const activeIndex = navItems.findIndex(
+		(item) =>
+			item.href === pathname ||
+			(item.href !== "/" && pathname.startsWith(`${item.href}/`)),
+	);
 	const previousActiveIndexRef = useRef(activeIndex);
 	const panDirection =
 		activeIndex === previousActiveIndexRef.current

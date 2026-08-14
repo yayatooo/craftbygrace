@@ -36,8 +36,10 @@ import { Route as platformAdminBlogsRouteImport } from './routes/(platform)/admi
 import { Route as mainPathlessBlogRouteImport } from './routes/(main)/_pathless/blog'
 import { Route as mainPathlessArchivesRouteImport } from './routes/(main)/_pathless/archives'
 import { Route as mainPathlessAboutRouteImport } from './routes/(main)/_pathless/about'
+import { Route as mainPathlessBlogIndexRouteImport } from './routes/(main)/_pathless/blog.index'
 import { Route as platformAdminJobTrackerCreateRouteImport } from './routes/(platform)/admin/job-tracker.create'
 import { Route as platformAdminBlogsCreateRouteImport } from './routes/(platform)/admin/blogs.create'
+import { Route as mainPathlessBlogSlugRouteImport } from './routes/(main)/_pathless/blog.$slug'
 import { Route as platformAdminJobTrackerEditIdRouteImport } from './routes/(platform)/admin/job-tracker.edit.$id'
 import { Route as platformAdminBlogsEditSlugRouteImport } from './routes/(platform)/admin/blogs.edit.$slug'
 
@@ -177,6 +179,11 @@ const mainPathlessAboutRoute = mainPathlessAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => mainPathlessRouteRoute,
 } as any)
+const mainPathlessBlogIndexRoute = mainPathlessBlogIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => mainPathlessBlogRoute,
+} as any)
 const platformAdminJobTrackerCreateRoute =
   platformAdminJobTrackerCreateRouteImport.update({
     id: '/create',
@@ -189,6 +196,11 @@ const platformAdminBlogsCreateRoute =
     path: '/create',
     getParentRoute: () => platformAdminBlogsRoute,
   } as any)
+const mainPathlessBlogSlugRoute = mainPathlessBlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => mainPathlessBlogRoute,
+} as any)
 const platformAdminJobTrackerEditIdRoute =
   platformAdminJobTrackerEditIdRouteImport.update({
     id: '/edit/$id',
@@ -207,7 +219,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
-  '/blog': typeof mainPathlessBlogRoute
+  '/blog': typeof mainPathlessBlogRouteWithChildren
   '/admin/blogs': typeof platformAdminBlogsRouteWithChildren
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
@@ -229,8 +241,10 @@ export interface FileRoutesByFullPath {
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin/': typeof platformAdminIndexRoute
+  '/blog/$slug': typeof mainPathlessBlogSlugRoute
   '/admin/blogs/create': typeof platformAdminBlogsCreateRoute
   '/admin/job-tracker/create': typeof platformAdminJobTrackerCreateRoute
+  '/blog/': typeof mainPathlessBlogIndexRoute
   '/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
   '/admin/job-tracker/edit/$id': typeof platformAdminJobTrackerEditIdRoute
 }
@@ -238,7 +252,6 @@ export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
   '/about': typeof mainPathlessAboutRoute
   '/archives': typeof mainPathlessArchivesRoute
-  '/blog': typeof mainPathlessBlogRoute
   '/admin/blogs': typeof platformAdminBlogsRouteWithChildren
   '/admin/dashboard': typeof platformAdminDashboardRoute
   '/admin/experiences': typeof platformAdminExperiencesRoute
@@ -260,8 +273,10 @@ export interface FileRoutesByTo {
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/': typeof mainPathlessIndexRoute
   '/admin': typeof platformAdminIndexRoute
+  '/blog/$slug': typeof mainPathlessBlogSlugRoute
   '/admin/blogs/create': typeof platformAdminBlogsCreateRoute
   '/admin/job-tracker/create': typeof platformAdminJobTrackerCreateRoute
+  '/blog': typeof mainPathlessBlogIndexRoute
   '/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
   '/admin/job-tracker/edit/$id': typeof platformAdminJobTrackerEditIdRoute
 }
@@ -272,7 +287,7 @@ export interface FileRoutesById {
   '/(auth)/login': typeof authLoginRoute
   '/(main)/_pathless/about': typeof mainPathlessAboutRoute
   '/(main)/_pathless/archives': typeof mainPathlessArchivesRoute
-  '/(main)/_pathless/blog': typeof mainPathlessBlogRoute
+  '/(main)/_pathless/blog': typeof mainPathlessBlogRouteWithChildren
   '/(platform)/admin/blogs': typeof platformAdminBlogsRouteWithChildren
   '/(platform)/admin/dashboard': typeof platformAdminDashboardRoute
   '/(platform)/admin/experiences': typeof platformAdminExperiencesRoute
@@ -294,8 +309,10 @@ export interface FileRoutesById {
   '/api/songs/cover': typeof ApiSongsCoverRoute
   '/(main)/_pathless/': typeof mainPathlessIndexRoute
   '/(platform)/admin/': typeof platformAdminIndexRoute
+  '/(main)/_pathless/blog/$slug': typeof mainPathlessBlogSlugRoute
   '/(platform)/admin/blogs/create': typeof platformAdminBlogsCreateRoute
   '/(platform)/admin/job-tracker/create': typeof platformAdminJobTrackerCreateRoute
+  '/(main)/_pathless/blog/': typeof mainPathlessBlogIndexRoute
   '/(platform)/admin/blogs/edit/$slug': typeof platformAdminBlogsEditSlugRoute
   '/(platform)/admin/job-tracker/edit/$id': typeof platformAdminJobTrackerEditIdRoute
 }
@@ -328,8 +345,10 @@ export interface FileRouteTypes {
     | '/api/songs/cover'
     | '/'
     | '/admin/'
+    | '/blog/$slug'
     | '/admin/blogs/create'
     | '/admin/job-tracker/create'
+    | '/blog/'
     | '/admin/blogs/edit/$slug'
     | '/admin/job-tracker/edit/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -337,7 +356,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/about'
     | '/archives'
-    | '/blog'
     | '/admin/blogs'
     | '/admin/dashboard'
     | '/admin/experiences'
@@ -359,8 +377,10 @@ export interface FileRouteTypes {
     | '/api/songs/cover'
     | '/'
     | '/admin'
+    | '/blog/$slug'
     | '/admin/blogs/create'
     | '/admin/job-tracker/create'
+    | '/blog'
     | '/admin/blogs/edit/$slug'
     | '/admin/job-tracker/edit/$id'
   id:
@@ -392,8 +412,10 @@ export interface FileRouteTypes {
     | '/api/songs/cover'
     | '/(main)/_pathless/'
     | '/(platform)/admin/'
+    | '/(main)/_pathless/blog/$slug'
     | '/(platform)/admin/blogs/create'
     | '/(platform)/admin/job-tracker/create'
+    | '/(main)/_pathless/blog/'
     | '/(platform)/admin/blogs/edit/$slug'
     | '/(platform)/admin/job-tracker/edit/$id'
   fileRoutesById: FileRoutesById
@@ -605,6 +627,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainPathlessAboutRouteImport
       parentRoute: typeof mainPathlessRouteRoute
     }
+    '/(main)/_pathless/blog/': {
+      id: '/(main)/_pathless/blog/'
+      path: '/'
+      fullPath: '/blog/'
+      preLoaderRoute: typeof mainPathlessBlogIndexRouteImport
+      parentRoute: typeof mainPathlessBlogRoute
+    }
     '/(platform)/admin/job-tracker/create': {
       id: '/(platform)/admin/job-tracker/create'
       path: '/create'
@@ -618,6 +647,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/blogs/create'
       preLoaderRoute: typeof platformAdminBlogsCreateRouteImport
       parentRoute: typeof platformAdminBlogsRoute
+    }
+    '/(main)/_pathless/blog/$slug': {
+      id: '/(main)/_pathless/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof mainPathlessBlogSlugRouteImport
+      parentRoute: typeof mainPathlessBlogRoute
     }
     '/(platform)/admin/job-tracker/edit/$id': {
       id: '/(platform)/admin/job-tracker/edit/$id'
@@ -636,17 +672,30 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface mainPathlessBlogRouteChildren {
+  mainPathlessBlogSlugRoute: typeof mainPathlessBlogSlugRoute
+  mainPathlessBlogIndexRoute: typeof mainPathlessBlogIndexRoute
+}
+
+const mainPathlessBlogRouteChildren: mainPathlessBlogRouteChildren = {
+  mainPathlessBlogSlugRoute: mainPathlessBlogSlugRoute,
+  mainPathlessBlogIndexRoute: mainPathlessBlogIndexRoute,
+}
+
+const mainPathlessBlogRouteWithChildren =
+  mainPathlessBlogRoute._addFileChildren(mainPathlessBlogRouteChildren)
+
 interface mainPathlessRouteRouteChildren {
   mainPathlessAboutRoute: typeof mainPathlessAboutRoute
   mainPathlessArchivesRoute: typeof mainPathlessArchivesRoute
-  mainPathlessBlogRoute: typeof mainPathlessBlogRoute
+  mainPathlessBlogRoute: typeof mainPathlessBlogRouteWithChildren
   mainPathlessIndexRoute: typeof mainPathlessIndexRoute
 }
 
 const mainPathlessRouteRouteChildren: mainPathlessRouteRouteChildren = {
   mainPathlessAboutRoute: mainPathlessAboutRoute,
   mainPathlessArchivesRoute: mainPathlessArchivesRoute,
-  mainPathlessBlogRoute: mainPathlessBlogRoute,
+  mainPathlessBlogRoute: mainPathlessBlogRouteWithChildren,
   mainPathlessIndexRoute: mainPathlessIndexRoute,
 }
 
