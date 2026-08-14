@@ -27,7 +27,7 @@ function RouteComponent() {
 
 	return (
 		<main>
-			<MotionReveal>
+			<MotionReveal priority>
 				<h1 className="text-base font-semibold sm:text-lg">Blog</h1>
 				<p className="py-2 text-muted-foreground">
 					Writing may not be my strongest suit, but sharing is something I love
@@ -39,7 +39,11 @@ function RouteComponent() {
 			{posts.length > 0 ? (
 				<section className="grid gap-6 py-8 sm:grid-cols-2" aria-label="Posts">
 					{posts.map((post, index) => (
-						<MotionReveal key={post.id} delay={0.05 + index * 0.04}>
+						<MotionReveal
+							key={post.id}
+							priority={index < 2}
+							delay={Math.min(index * 0.03, 0.12)}
+						>
 							<Link
 								to="/blog/$slug"
 								params={{ slug: post.slug }}

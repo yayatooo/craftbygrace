@@ -1,9 +1,30 @@
 import { Safari } from "#/components/ui/safari";
 
-export function SafariDemo() {
+function displayUrl(value: string | null) {
+	if (!value) return "Project preview";
+
+	try {
+		return new URL(value).hostname.replace(/^www\./, "");
+	} catch {
+		return value;
+	}
+}
+
+export function SafariDemo({
+	imageSrc,
+	demoLink,
+}: {
+	imageSrc: string;
+	demoLink: string | null;
+}) {
 	return (
-		<div className="">
-			<Safari url="laflemme.ai" imageSrc="/banner.png" />
+		<div>
+			<Safari
+				url={displayUrl(demoLink)}
+				imageSrc={imageSrc}
+				imageLoading="eager"
+				imageFetchPriority="high"
+			/>
 		</div>
 	);
 }

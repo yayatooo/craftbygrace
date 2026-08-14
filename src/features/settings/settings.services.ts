@@ -23,6 +23,26 @@ export async function getProfileSettingsByUserId(userId: string) {
 	return profile ?? null;
 }
 
+export async function getPublicProfile() {
+	const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+
+	if (!adminEmail) {
+		throw new Error("ADMIN_EMAIL is missing");
+	}
+
+	const [profile] = await db
+		.select({
+			name: user.name,
+			headline: user.headline,
+			image: user.image,
+		})
+		.from(user)
+		.where(eq(user.email, adminEmail))
+		.limit(1);
+
+	return profile ?? null;
+}
+
 export async function getUserByUsernameExcludingOwner(
 	username: string,
 	userId: string,

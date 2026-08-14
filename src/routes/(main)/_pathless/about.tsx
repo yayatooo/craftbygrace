@@ -21,8 +21,8 @@ function RouteComponent() {
 	return (
 		<div>
 			<main>
-				<MotionReveal>
-					<CardProfile />
+				<MotionReveal priority>
+					<CardProfile profile={aboutData.profile} />
 				</MotionReveal>
 				<MotionReveal>
 					<AboutSection data={aboutData} />

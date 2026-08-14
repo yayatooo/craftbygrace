@@ -21,7 +21,7 @@ function RouteComponent() {
 	return (
 		<div id="archives">
 			<main>
-				<MotionReveal>
+				<MotionReveal priority>
 					<ArchivesProject projects={data.projects} />
 				</MotionReveal>
 				<MotionReveal delay={0.05}>
