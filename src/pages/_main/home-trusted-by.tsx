@@ -1,3 +1,77 @@
+import bensonLogo from "#/assets/partners/benson-logo.png?format=webp&w=160";
+import bensonLogoSrcSet from "#/assets/partners/benson-logo.png?format=webp&w=160;320&as=srcset";
+import cbrLogo from "#/assets/partners/cbr.png?format=webp&w=160";
+import cbrLogoSrcSet from "#/assets/partners/cbr.png?format=webp&w=160;320&as=srcset";
+import inaLogo from "#/assets/partners/ina.svg.png?format=webp&w=160";
+import inaLogoSrcSet from "#/assets/partners/ina.svg.png?format=webp&w=160;320&as=srcset";
+import markasMobilLogo from "#/assets/partners/markas-mobil.png?format=webp&w=160";
+import markasMobilLogoSrcSet from "#/assets/partners/markas-mobil.png?format=webp&w=160;320&as=srcset";
+import odooLogo from "#/assets/partners/odoo.png?format=webp&w=160";
+import odooLogoSrcSet from "#/assets/partners/odoo.png?format=webp&w=160;320&as=srcset";
+import shudaxiaLogo from "#/assets/partners/shudaxia.png?format=webp&w=160";
+import shudaxiaLogoSrcSet from "#/assets/partners/shudaxia.png?format=webp&w=160;320&as=srcset";
+import skorLogo from "#/assets/partners/skor.png?format=webp&w=160";
+import skorLogoSrcSet from "#/assets/partners/skor.png?format=webp&w=160;320&as=srcset";
+
+const partners = [
+	{
+		name: "CBR",
+		src: cbrLogo,
+		srcSet: cbrLogoSrcSet,
+		width: 160,
+		height: 36,
+		className: "max-h-8",
+	},
+	{
+		name: "INA",
+		src: inaLogo,
+		srcSet: inaLogoSrcSet,
+		width: 160,
+		height: 46,
+		className: "max-h-8",
+	},
+	{
+		name: "Markas Mobil",
+		src: markasMobilLogo,
+		srcSet: markasMobilLogoSrcSet,
+		width: 160,
+		height: 44,
+		className: "max-h-12",
+	},
+	{
+		name: "Odoo",
+		src: odooLogo,
+		srcSet: odooLogoSrcSet,
+		width: 160,
+		height: 51,
+		className: "max-h-8",
+	},
+	{
+		name: "SDX",
+		src: shudaxiaLogo,
+		srcSet: shudaxiaLogoSrcSet,
+		width: 160,
+		height: 50,
+		className: "max-h-10",
+	},
+	{
+		name: "Skor",
+		src: skorLogo,
+		srcSet: skorLogoSrcSet,
+		width: 160,
+		height: 66,
+		className: "max-h-8",
+	},
+	{
+		name: "Benson",
+		src: bensonLogo,
+		srcSet: bensonLogoSrcSet,
+		width: 160,
+		height: 49,
+		className: "max-h-12",
+	},
+] as const;
+
 export const TrustedBy = () => {
 	function getWorkExperience(startYear: number, startMonth: number) {
 		const now = new Date();
@@ -15,20 +89,6 @@ export const TrustedBy = () => {
 
 		return `${years} ${years === 1 ? "year" : "years"}`;
 	}
-
-	const partners = [
-		{ name: "CBR", src: "/partners/cbr.png", className: "max-h-8" },
-		{ name: "INA", src: "/partners/ina.svg.png", className: "max-h-8" },
-		{
-			name: "Markas Mobil",
-			src: "/partners/markas-mobil.png",
-			className: "max-h-12",
-		},
-		{ name: "Odoo", src: "/partners/odoo.png", className: "max-h-8" },
-		{ name: "SDX", src: "/partners/shudaxia.png", className: "max-h-10" },
-		{ name: "Skor", src: "/partners/skor.png", className: "max-h-8" },
-		{ name: "Benson", src: "/partners/benson-logo.png", className: "max-h-12" },
-	];
 
 	return (
 		<>
@@ -54,9 +114,14 @@ export const TrustedBy = () => {
 					>
 						<img
 							src={partner.src}
+							srcSet={partner.srcSet}
+							sizes="(min-width: 640px) 128px, calc(50vw - 22px)"
 							alt={partner.name}
+							width={partner.width}
+							height={partner.height}
 							className={`${partner.className} max-w-full object-contain grayscale contrast-125 saturate-0 dark:brightness-0 dark:invert`}
 							loading="lazy"
+							decoding="async"
 						/>
 					</div>
 				))}
