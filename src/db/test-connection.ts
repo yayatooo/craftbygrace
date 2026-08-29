@@ -7,7 +7,7 @@ import { db } from "./index";
 type DatabaseConnectionResult = {
   database: string;
   username: string;
-  connectedAt: Date;
+  connectedAt: string;
 };
 
 async function testDatabaseConnection() {
@@ -30,7 +30,9 @@ async function testDatabaseConnection() {
     console.log("✓ Database connection successful");
     console.log(`  Database: ${connection.database}`);
     console.log(`  User: ${connection.username}`);
-    console.log(`  Connected at: ${connection.connectedAt.toISOString()}`);
+    console.log(
+      `  Connected at: ${new Date(connection.connectedAt).toISOString()}`,
+    );
   } catch (error) {
     console.error("✗ Database connection failed");
     console.error(error);
