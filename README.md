@@ -1,226 +1,219 @@
-Welcome to your new TanStack Start app! 
+# Craft by Grace
 
-# Getting Started
+Craft by Grace is a full-stack portfolio and content-management application built with TanStack Start. It serves a public portfolio, archive, and blog while providing an owner-only admin area for managing the content displayed across the site.
 
-To run this application:
+## Features
+
+- Public home, about, archives, and blog pages
+- Owner-only admin dashboard
+- Content management for projects, experience, skills, gallery items, movies, songs, and blog posts
+- Job application tracking
+- Email/password authentication with Better Auth
+- PostgreSQL persistence through Drizzle ORM
+- Image and object storage through an S3-compatible Cloudflare R2 client
+- Dark/light theme support and responsive UI components
+
+## Tech Stack
+
+- Bun
+- TypeScript and React 19
+- TanStack Start and TanStack Router
+- Vite 8
+- Tailwind CSS 4 and Radix-based UI components
+- PostgreSQL, Drizzle ORM, and node-postgres (`pg`)
+- Better Auth with the Drizzle adapter
+- AWS SDK S3 client for Cloudflare R2
+- Biome for linting and formatting
+- Vitest for testing
+- Wrangler for the planned Cloudflare Workers deployment
+
+## Project Structure
+
+```text
+src/
+├── components/       Shared and UI components
+├── db/               Drizzle client, schema, migrations runner, and seed script
+├── features/         Domain services, validation, actions, and server functions
+├── lib/              Authentication, R2 client, and shared utilities
+├── pages/            Page-level presentation components
+└── routes/           TanStack Router pages and API routes
+
+drizzle/              Generated SQL migrations and Drizzle metadata
+public/               Static images, icons, manifest, and robots.txt
+```
+
+The canonical database schema is `src/db/schema.ts`. Feature-level files named `*.schema.ts` contain feature validation and input schemas; they are not separate database schemas.
+
+## Prerequisites
+
+- Bun
+- A PostgreSQL database
+- Cloudflare R2 or another S3-compatible service for upload features
+
+Local PostgreSQL may run in Docker, but this repository does not include a Dockerfile or Compose configuration. The database must be started and exposed separately.
+
+## Environment Variables
+
+Create a local `.env.local` file. Do not commit environment files or credentials.
+
+```dotenv
+DATABASE_URL=
+
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+
+ADMIN_NAME=
+ADMIN_EMAIL=
+ADMIN_PASSWORD=
+
+R2_ACCOUNT_ID=
+R2_ACCESS_KEY_ID=
+R2_SECRET_ACCESS_KEY=
+R2_BUCKET_NAME=
+R2_PUBLIC_URL=
+R2_REGION=auto
+# R2_ENDPOINT=
+```
+
+| Variable | Required | Used for |
+| --- | --- | --- |
+| `DATABASE_URL` | Yes | Application queries, Drizzle commands, migrations, and connection tests |
+| `BETTER_AUTH_SECRET` | Yes | Better Auth session and token signing |
+| `BETTER_AUTH_URL` | Yes | Better Auth base URL; normally `http://localhost:3000` locally |
+| `ADMIN_EMAIL` | Yes | Determines which authenticated account is the site owner |
+| `ADMIN_NAME` | Seed only | Initial owner account name |
+| `ADMIN_PASSWORD` | Seed only | Initial owner account password |
+| `R2_ACCOUNT_ID` | Yes | Builds the default Cloudflare R2 endpoint |
+| `R2_ACCESS_KEY_ID` | Yes | S3-compatible R2 authentication |
+| `R2_SECRET_ACCESS_KEY` | Yes | S3-compatible R2 authentication |
+| `R2_BUCKET_NAME` | Yes | Upload and deletion target bucket |
+| `R2_PUBLIC_URL` | Yes | Public base URL for stored objects |
+| `R2_REGION` | No | S3 client region; defaults to `auto` |
+| `R2_ENDPOINT` | No | Overrides the endpoint derived from `R2_ACCOUNT_ID` |
+
+The application reads server configuration through `process.env`. Database scripts also import `dotenv/config`. Keep only one effective `DATABASE_URL` for the command you intend to run: local Bun commands currently load `.env.local`, so verify the selected target before running migrations or seeds.
+
+## Local Development
+
+Install dependencies:
 
 ```bash
 bun install
-bun --bun run dev
 ```
 
-# Building For Production
-
-To build this application for production:
+Apply the committed migrations to the currently selected database and verify the connection:
 
 ```bash
-bun --bun run build
+bun run db:setup
 ```
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Optionally create the initial owner account:
 
 ```bash
-bun --bun run test
+bun run db:seed-admin
 ```
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `bun install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+Start the development server at `http://localhost:3000`:
 
 ```bash
-bun --bun run lint
-bun --bun run format
-bun --bun run check
+bun run dev
 ```
 
+The public site is available at `/`, and authenticated administration routes are under `/admin`. Unauthorized admin access redirects to `/login`.
 
-## Deploy to Cloudflare Workers
+## Database Workflow
 
-This project uses the Cloudflare Vite plugin (configured in `vite.config.ts`) and `wrangler.jsonc`:
+The project uses PostgreSQL with `drizzle-orm/node-postgres`. Drizzle creates a `pg.Pool` configured for one connection per runtime instance, one use per connection, and a five-second idle timeout. Closing each connection after its query prevents a Worker isolate from retaining a TCP socket for reuse by another request.
 
-1. Install Wrangler: `npm install -g wrangler`
-2. Authenticate: `wrangler login`
-3. Deploy: `npx wrangler deploy`
+Database configuration:
 
-For production env vars, run `wrangler secret put MY_VAR` for each secret listed in `.env.example`. Public (non-secret) vars go in `wrangler.jsonc` under `vars`.
+- Schema: `src/db/schema.ts`
+- Generated migrations: `drizzle/`
+- Dialect: PostgreSQL
+- Migration runner: `src/db/migrate.ts`
 
-KV, D1, R2, and Durable Object bindings are configured in `wrangler.jsonc` — see https://developers.cloudflare.com/workers/wrangler/configuration/.
-
-
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+When changing the database schema:
 
 ```bash
-pnpm dlx shadcn@latest add button
+bun run db:generate
+bun run db:check
+bun run db:migrate
+bun run db:test
 ```
 
+Use `db:generate` after editing `src/db/schema.ts`, review the generated SQL, and then run `db:migrate` against the intended database. The repository follows a migration-based workflow and does not provide a `db:push` script.
 
+Four generated migrations are currently committed. Repository history alone does not prove whether they have already been applied to a particular local or Neon database.
 
-## Routing
+## Available Scripts
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+| Script | Purpose |
+| --- | --- |
+| `bun run dev` | Start Vite development mode on port 3000 |
+| `bun run build` | Create a production build |
+| `bun run preview` | Preview the production build locally |
+| `bun run generate-routes` | Regenerate the TanStack route tree |
+| `bun run test` | Run Vitest |
+| `bun run lint` | Run Biome lint checks |
+| `bun run format` | Format supported files with Biome |
+| `bun run check` | Run Biome checks |
+| `bun run db:generate` | Generate SQL migrations from the Drizzle schema |
+| `bun run db:check` | Check Drizzle migration consistency |
+| `bun run db:migrate` | Apply committed migrations to `DATABASE_URL` |
+| `bun run db:test` | Test the selected database connection |
+| `bun run db:setup` | Migrate and then test the selected database |
+| `bun run db:studio` | Open Drizzle Studio |
+| `bun run db:seed-admin` | Create the configured owner account |
+| `bun run deploy` | Build and invoke Wrangler deployment |
 
-### Adding A Route
+Vitest is installed, but the repository does not currently contain test files.
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+## Authentication and Administration
 
-TanStack will automatically generate the content of the route file for you.
+Better Auth stores users, sessions, accounts, and verification records in PostgreSQL. Email/password authentication is enabled.
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+The account whose email matches `ADMIN_EMAIL` is treated as the owner. Admin server functions and R2 mutation endpoints check this owner status before allowing reads or writes to protected content.
 
-### Adding Links
+## Cloudflare Workers Status
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+Cloudflare Workers is the production runtime target. The Cloudflare-targeted Vite build is configured and validated; account secrets and the first deployment still need to be completed.
 
-```tsx
-import { Link } from "@tanstack/react-router";
+Current repository state:
+
+- `wrangler.jsonc` defines the TanStack Start server entry and enables `nodejs_compat`.
+- `@cloudflare/vite-plugin` is registered as the TanStack Start SSR Vite environment.
+- The plugin generates the Worker entry and static asset configuration during builds.
+- No production secrets or bindings are declared in `wrangler.jsonc`.
+- The database client remains `pg`; its pool is limited to one connection and one use per connection for Worker-safe TCP lifecycle behavior.
+- Runtime modules use `process.env`, which is populated from Worker bindings under the configured compatibility date and `nodejs_compat` mode.
+- `dotenv/config` is limited to local migration, connection-test, seed, and Drizzle CLI tooling.
+
+Do not assume local `.env` files are deployed. Before using `bun run deploy`, provide all required secrets through Cloudflare and confirm the production authentication URL.
+
+## Data and Storage
+
+The PostgreSQL schema contains tables for:
+
+- Authentication users, sessions, accounts, and verification records
+- Skills
+- Projects
+- Experiences
+- Songs
+- Movies
+- Gallery items
+- Job applications
+- Blog posts
+
+Upload API routes store images and other objects through the S3-compatible R2 client. Upload and delete endpoints are protected by owner authentication.
+
+## Code Quality
+
+Run the project checks before submitting changes:
+
+```bash
+bun run check
+bun run test
+bun run build
 ```
 
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+The generated `src/routeTree.gen.ts` file and `src/styles.css` are excluded from Biome's configured source checks.
