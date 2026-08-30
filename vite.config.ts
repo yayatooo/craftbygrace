@@ -6,17 +6,26 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import { imagetools } from "vite-imagetools";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
 	resolve: {
 		tsconfigPaths: true,
 	},
 
 	plugins: [
-		cloudflare({ viteEnvironment: { name: "ssr" } }),
+		...(command === "build"
+			? [
+					cloudflare({
+						viteEnvironment: {
+							name: "ssr",
+						},
+					}),
+				]
+			: []),
+
 		devtools(),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),
 		imagetools(),
 	],
-});
+}));
