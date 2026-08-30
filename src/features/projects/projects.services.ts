@@ -1,11 +1,13 @@
 import { asc, desc, eq, ne } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { projects } from "#/db/schema";
 
 import type { ProjectInput } from "./projects.schema";
 
 export async function getProjects() {
+	const db = getDb();
+
 	return db
 		.select()
 		.from(projects)
@@ -13,6 +15,8 @@ export async function getProjects() {
 }
 
 export async function createProject(data: ProjectInput) {
+	const db = getDb();
+
 	const values = {
 		thumbnail: data.thumbnail,
 		name: data.name,
@@ -46,6 +50,8 @@ export async function createProject(data: ProjectInput) {
 }
 
 export async function updateProject(id: string, data: ProjectInput) {
+	const db = getDb();
+
 	const values = {
 		thumbnail: data.thumbnail,
 		name: data.name,
@@ -91,6 +97,8 @@ export async function updateProject(id: string, data: ProjectInput) {
 }
 
 export async function deleteProject(id: string) {
+	const db = getDb();
+
 	const [project] = await db
 		.delete(projects)
 		.where(eq(projects.id, id))
@@ -102,6 +110,8 @@ export async function deleteProject(id: string) {
 }
 
 export async function setProjectActive(id: string, isActive: boolean) {
+	const db = getDb();
+
 	const [project] = await db
 		.update(projects)
 		.set({

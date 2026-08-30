@@ -1,7 +1,6 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { createFileRoute } from "@tanstack/react-router";
 import { getCurrentAuth } from "#/features/auth/auth.server";
-import { getPublicUrl, r2Config, s3 } from "#/lib/s3";
+import { getPublicUrl, getR2Bucket } from "#/lib/s3";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -58,14 +57,11 @@ export const Route = createFileRoute("/api/projects/thumbnail")({
 				const key = `projects/${crypto.randomUUID()}/thumbnail.${extension}`;
 				const body = new Uint8Array(await thumbnailFile.arrayBuffer());
 
-				await s3.send(
-					new PutObjectCommand({
-						Bucket: r2Config.bucketName,
-						Key: key,
-						Body: body,
-						ContentType: thumbnailFile.type,
-					}),
-				);
+				await getR2Bucket().put(key, body, {
+					httpMetadata: {
+						contentType: thumbnailFile.type,
+					},
+				});
 
 				return json({
 					key,

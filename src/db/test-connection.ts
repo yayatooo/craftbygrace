@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { sql } from "drizzle-orm";
 
-import { db } from "./index";
+import { withDatabase } from "./index";
 
 type DatabaseConnectionResult = {
 	database: string;
@@ -12,13 +12,13 @@ type DatabaseConnectionResult = {
 
 async function testDatabaseConnection() {
 	try {
-		const result = await db.execute<DatabaseConnectionResult>(
-			sql`
+		const result = await withDatabase(async (db) =>
+			db.execute<DatabaseConnectionResult>(sql`
         select
           current_database() as "database",
           current_user as "username",
           now() as "connectedAt"
-      `,
+			`),
 		);
 
 		const connection = result.rows[0];

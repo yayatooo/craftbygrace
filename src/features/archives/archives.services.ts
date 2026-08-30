@@ -1,9 +1,11 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { experiences, projects } from "#/db/schema";
 
 export async function getPublicArchivesData() {
+	const db = getDb();
+
 	const [publicProjects, workExperiences] = await Promise.all([
 		db
 			.select({

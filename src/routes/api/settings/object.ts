@@ -1,8 +1,7 @@
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getCurrentAuth } from "#/features/auth/auth.server";
-import { r2Config, s3 } from "#/lib/s3";
+import { getR2Bucket } from "#/lib/s3";
 
 function json(data: unknown, status = 200) {
 	return Response.json(data, { status });
@@ -38,12 +37,7 @@ export const Route = createFileRoute("/api/settings/object")({
 					return json({ error: "Invalid R2 object key." }, 400);
 				}
 
-				await s3.send(
-					new DeleteObjectCommand({
-						Bucket: r2Config.bucketName,
-						Key: key,
-					}),
-				);
+				await getR2Bucket().delete(key);
 
 				return json({
 					ok: true,

@@ -1,11 +1,13 @@
 import { asc, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { songs } from "#/db/schema";
 
 import type { SongInput } from "./songs.schema";
 
 export async function getSongs() {
+	const db = getDb();
+
 	return db
 		.select()
 		.from(songs)
@@ -13,6 +15,8 @@ export async function getSongs() {
 }
 
 export async function createSong(data: SongInput) {
+	const db = getDb();
+
 	const [song] = await db
 		.insert(songs)
 		.values({
@@ -29,6 +33,8 @@ export async function createSong(data: SongInput) {
 }
 
 export async function updateSong(id: string, data: SongInput) {
+	const db = getDb();
+
 	const [song] = await db
 		.update(songs)
 		.set({
@@ -47,6 +53,8 @@ export async function updateSong(id: string, data: SongInput) {
 }
 
 export async function deleteSong(id: string) {
+	const db = getDb();
+
 	const [song] = await db.delete(songs).where(eq(songs.id, id)).returning({
 		id: songs.id,
 	});
@@ -55,6 +63,8 @@ export async function deleteSong(id: string) {
 }
 
 export async function setSongActive(id: string, isActive: boolean) {
+	const db = getDb();
+
 	const [song] = await db
 		.update(songs)
 		.set({

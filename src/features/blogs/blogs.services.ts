@@ -1,6 +1,6 @@
 import { and, desc, eq, lte, sql } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { blogs } from "#/db/schema";
 
 import { type BlogInput, calculateReadingTime } from "./blogs.schema";
@@ -33,6 +33,8 @@ function resolvePublishedAtForUpdate(
 }
 
 export async function getBlogs() {
+	const db = getDb();
+
 	return db
 		.select()
 		.from(blogs)
@@ -40,6 +42,8 @@ export async function getBlogs() {
 }
 
 export async function getBlogBySlug(slug: string) {
+	const db = getDb();
+
 	const [blog] = await db
 		.select()
 		.from(blogs)
@@ -50,6 +54,8 @@ export async function getBlogBySlug(slug: string) {
 }
 
 export async function getPublishedBlogs() {
+	const db = getDb();
+
 	return db
 		.select({
 			id: blogs.id,
@@ -70,6 +76,8 @@ export async function getPublishedBlogs() {
 }
 
 export async function getPublishedBlogBySlug(slug: string) {
+	const db = getDb();
+
 	const [blog] = await db
 		.select({
 			id: blogs.id,
@@ -103,6 +111,8 @@ export type PublishedBlog = NonNullable<
 >;
 
 export async function createBlog(data: BlogInput) {
+	const db = getDb();
+
 	const [blog] = await db
 		.insert(blogs)
 		.values({
@@ -124,6 +134,8 @@ export async function createBlog(data: BlogInput) {
 }
 
 export async function updateBlog(id: string, data: BlogInput) {
+	const db = getDb();
+
 	const [currentBlog] = await db
 		.select({
 			publishedAt: blogs.publishedAt,
@@ -158,6 +170,8 @@ export async function updateBlog(id: string, data: BlogInput) {
 }
 
 export async function deleteBlog(id: string) {
+	const db = getDb();
+
 	const [blog] = await db.delete(blogs).where(eq(blogs.id, id)).returning({
 		id: blogs.id,
 	});

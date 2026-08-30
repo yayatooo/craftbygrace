@@ -1,10 +1,12 @@
 import { and, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { projects } from "#/db/schema";
 import { getPublicProfile } from "#/features/settings/settings.services";
 
 export async function getPublicHomeData() {
+	const db = getDb();
+
 	const [profile, currentProjects] = await Promise.all([
 		getPublicProfile(),
 		db

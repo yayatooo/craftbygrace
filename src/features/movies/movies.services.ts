@@ -1,11 +1,13 @@
 import { asc, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { movies } from "#/db/schema";
 
 import type { MoviesInput } from "./movies.schema";
 
 export async function getMovies() {
+	const db = getDb();
+
 	return db
 		.select()
 		.from(movies)
@@ -13,6 +15,8 @@ export async function getMovies() {
 }
 
 export async function createMovie(data: MoviesInput) {
+	const db = getDb();
+
 	const [movie] = await db
 		.insert(movies)
 		.values({
@@ -29,6 +33,8 @@ export async function createMovie(data: MoviesInput) {
 }
 
 export async function updateMovie(id: string, data: MoviesInput) {
+	const db = getDb();
+
 	const [movie] = await db
 		.update(movies)
 		.set({
@@ -47,6 +53,8 @@ export async function updateMovie(id: string, data: MoviesInput) {
 }
 
 export async function deleteMovie(id: string) {
+	const db = getDb();
+
 	const [movie] = await db.delete(movies).where(eq(movies.id, id)).returning({
 		id: movies.id,
 	});
@@ -55,6 +63,8 @@ export async function deleteMovie(id: string) {
 }
 
 export async function setMovieActive(id: string, isActive: boolean) {
+	const db = getDb();
+
 	const [movie] = await db
 		.update(movies)
 		.set({

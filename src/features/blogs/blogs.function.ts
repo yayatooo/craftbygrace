@@ -1,6 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import { requireOwnerMiddleware } from "#/features/auth/auth.middleware";
+import {
+	databaseMiddleware,
+	requireOwnerMiddleware,
+} from "#/features/auth/auth.middleware";
 
 import {
 	blogIdSchema,
@@ -18,11 +21,12 @@ import {
 	updateBlog,
 } from "./blogs.services";
 
-export const getPublishedBlogsFn = createServerFn({ method: "GET" }).handler(
-	async () => getPublishedBlogs(),
-);
+export const getPublishedBlogsFn = createServerFn({ method: "GET" })
+	.middleware([databaseMiddleware])
+	.handler(async () => getPublishedBlogs());
 
 export const getPublishedBlogBySlugFn = createServerFn({ method: "GET" })
+	.middleware([databaseMiddleware])
 	.validator(blogSlugSchema)
 	.handler(async ({ data }) => getPublishedBlogBySlug(data.slug));
 

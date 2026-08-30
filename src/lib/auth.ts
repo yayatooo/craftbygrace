@@ -2,8 +2,10 @@ import { drizzleAdapter } from "@better-auth/drizzle-adapter";
 import { betterAuth } from "better-auth";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 
-import { db } from "#/db";
+import { getDatabaseScopeValue, getDb } from "#/db";
 import { account, session, user, verification } from "#/db/schema";
+
+const authScopeKey = Symbol("auth");
 
 function requiredEnv(name: string) {
 	const value = process.env[name];
@@ -15,23 +17,29 @@ function requiredEnv(name: string) {
 	return value;
 }
 
-export const auth = betterAuth({
-	secret: requiredEnv("BETTER_AUTH_SECRET"),
-	baseURL: requiredEnv("BETTER_AUTH_URL"),
+function createAuth() {
+	return betterAuth({
+		secret: requiredEnv("BETTER_AUTH_SECRET"),
+		baseURL: requiredEnv("BETTER_AUTH_URL"),
 
-	database: drizzleAdapter(db, {
-		provider: "pg",
-		schema: {
-			user,
-			session,
-			account,
-			verification,
+		database: drizzleAdapter(getDb(), {
+			provider: "pg",
+			schema: {
+				user,
+				session,
+				account,
+				verification,
+			},
+		}),
+
+		emailAndPassword: {
+			enabled: true,
 		},
-	}),
 
-	emailAndPassword: {
-		enabled: true,
-	},
+		plugins: [tanstackStartCookies()],
+	});
+}
 
-	plugins: [tanstackStartCookies()],
-});
+export function getAuth() {
+	return getDatabaseScopeValue(authScopeKey, createAuth);
+}

@@ -1,4 +1,4 @@
-import { S3Client } from "@aws-sdk/client-s3";
+import { env } from "cloudflare:workers";
 
 function requiredEnv(name: string) {
 	const value = process.env[name];
@@ -10,22 +10,9 @@ function requiredEnv(name: string) {
 	return value;
 }
 
-const accountId = requiredEnv("R2_ACCOUNT_ID");
-
-export const s3 = new S3Client({
-	region: process.env.R2_REGION ?? "auto",
-	endpoint:
-		process.env.R2_ENDPOINT ?? `https://${accountId}.r2.cloudflarestorage.com`,
-	credentials: {
-		accessKeyId: requiredEnv("R2_ACCESS_KEY_ID"),
-		secretAccessKey: requiredEnv("R2_SECRET_ACCESS_KEY"),
-	},
-});
-
-export const r2Config = {
-	bucketName: requiredEnv("R2_BUCKET_NAME"),
-	publicUrl: requiredEnv("R2_PUBLIC_URL").replace(/\/$/, ""),
-} as const;
+export function getR2Bucket() {
+	return env.R2_BUCKET;
+}
 
 export type UploadFolder =
 	| "gallery"
@@ -73,5 +60,7 @@ export function createObjectKey({
 }
 
 export function getPublicUrl(key: string) {
-	return `${r2Config.publicUrl}/${key}`;
+	const publicUrl = requiredEnv("R2_PUBLIC_URL").replace(/\/$/, "");
+
+	return `${publicUrl}/${key}`;
 }

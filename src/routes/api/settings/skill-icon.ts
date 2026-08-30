@@ -1,8 +1,7 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { getCurrentAuth } from "#/features/auth/auth.server";
-import { createObjectKey, getPublicUrl, r2Config, s3 } from "#/lib/s3";
+import { createObjectKey, getPublicUrl, getR2Bucket } from "#/lib/s3";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const uuidPattern =
@@ -63,14 +62,11 @@ export const Route = createFileRoute("/api/settings/skill-icon")({
 				});
 				const body = new Uint8Array(await skillIconFile.arrayBuffer());
 
-				await s3.send(
-					new PutObjectCommand({
-						Bucket: r2Config.bucketName,
-						Key: key,
-						Body: body,
-						ContentType: skillIconFile.type,
-					}),
-				);
+				await getR2Bucket().put(key, body, {
+					httpMetadata: {
+						contentType: skillIconFile.type,
+					},
+				});
 
 				return json({
 					key,

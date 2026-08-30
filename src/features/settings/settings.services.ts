@@ -1,11 +1,13 @@
 import { and, eq, ne } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { user } from "#/db/schema";
 
 import type { UpdateProfileSettingsInput } from "./settings.schema";
 
 export async function getProfileSettingsByUserId(userId: string) {
+	const db = getDb();
+
 	const [profile] = await db
 		.select({
 			name: user.name,
@@ -24,6 +26,8 @@ export async function getProfileSettingsByUserId(userId: string) {
 }
 
 export async function getPublicProfile() {
+	const db = getDb();
+
 	const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
 
 	if (!adminEmail) {
@@ -47,6 +51,8 @@ export async function getUserByUsernameExcludingOwner(
 	username: string,
 	userId: string,
 ) {
+	const db = getDb();
+
 	const [existingUser] = await db
 		.select({
 			id: user.id,
@@ -62,6 +68,8 @@ export async function updateProfileSettingsByUserId(
 	userId: string,
 	data: UpdateProfileSettingsInput,
 ) {
+	const db = getDb();
+
 	return db.transaction(async (tx) => {
 		const [currentProfile] = await tx
 			.select({

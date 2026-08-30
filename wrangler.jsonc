@@ -2,6 +2,21 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "craft-by-grace",
   "compatibility_date": "2025-09-02",
-  "compatibility_flags": ["nodejs_compat"],
-  "main": "@tanstack/react-start/server-entry"
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env"
+  ],
+  "main": "@tanstack/react-start/server-entry",
+  "r2_buckets": [
+     {
+       "binding": "R2_BUCKET",
+       "bucket_name": "craftbygrace-bucket"
+     }
+   ],
+
+  "vars": {
+    "BETTER_AUTH_URL": "https://craftbygrace.com",
+    "R2_PUBLIC_URL": "https://assets.craftbygrace.com",
+    "ADMIN_EMAIL": "rahmathidayat.jobs@gmail.com"
+  }
 }

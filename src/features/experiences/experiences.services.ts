@@ -1,11 +1,13 @@
 import { asc, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { experiences } from "#/db/schema";
 
 import type { ExperienceInput } from "./experiences.schema";
 
 export async function getExperiences() {
+	const db = getDb();
+
 	return db
 		.select()
 		.from(experiences)
@@ -17,6 +19,8 @@ export async function getExperiences() {
 }
 
 export async function createExperience(data: ExperienceInput) {
+	const db = getDb();
+
 	const [experience] = await db
 		.insert(experiences)
 		.values({
@@ -36,6 +40,8 @@ export async function createExperience(data: ExperienceInput) {
 }
 
 export async function updateExperience(id: string, data: ExperienceInput) {
+	const db = getDb();
+
 	const [experience] = await db
 		.update(experiences)
 		.set({
@@ -57,6 +63,8 @@ export async function updateExperience(id: string, data: ExperienceInput) {
 }
 
 export async function deleteExperience(id: string) {
+	const db = getDb();
+
 	const [experience] = await db
 		.delete(experiences)
 		.where(eq(experiences.id, id))
@@ -68,6 +76,8 @@ export async function deleteExperience(id: string) {
 }
 
 export async function setExperienceCurrent(id: string, isCurrent: boolean) {
+	const db = getDb();
+
 	const [experience] = await db
 		.update(experiences)
 		.set({

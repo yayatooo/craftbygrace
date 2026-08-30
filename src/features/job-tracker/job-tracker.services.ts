@@ -1,15 +1,19 @@
 import { desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { jobTracker } from "#/db/schema";
 
 import type { JobApplicationInput } from "./job-tracker.schema";
 
 export async function getJobApplications() {
+	const db = getDb();
+
 	return db.select().from(jobTracker).orderBy(desc(jobTracker.createdAt));
 }
 
 export async function getJobApplicationById(id: string) {
+	const db = getDb();
+
 	const [application] = await db
 		.select()
 		.from(jobTracker)
@@ -20,6 +24,8 @@ export async function getJobApplicationById(id: string) {
 }
 
 export async function createJobApplication(data: JobApplicationInput) {
+	const db = getDb();
+
 	const [application] = await db
 		.insert(jobTracker)
 		.values({
@@ -43,6 +49,8 @@ export async function updateJobApplication(
 	id: string,
 	data: JobApplicationInput,
 ) {
+	const db = getDb();
+
 	const [application] = await db
 		.update(jobTracker)
 		.set({
@@ -65,6 +73,8 @@ export async function updateJobApplication(
 }
 
 export async function deleteJobApplication(id: string) {
+	const db = getDb();
+
 	const [application] = await db
 		.delete(jobTracker)
 		.where(eq(jobTracker.id, id))
@@ -79,6 +89,8 @@ export async function updateJobApplicationStatus(
 	id: string,
 	status: JobApplicationInput["status"],
 ) {
+	const db = getDb();
+
 	const [application] = await db
 		.update(jobTracker)
 		.set({

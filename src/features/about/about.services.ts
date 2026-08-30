@@ -1,10 +1,12 @@
 import { asc, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { gallery, movies, skills, songs } from "#/db/schema";
 import { getPublicProfile } from "#/features/settings/settings.services";
 
 export async function getPublicAboutData() {
+	const db = getDb();
+
 	const [profile, activeSkills, activeSongs, activeMovies, activeGalleryItems] =
 		await Promise.all([
 			getPublicProfile(),

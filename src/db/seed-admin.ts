@@ -2,7 +2,8 @@ import "dotenv/config";
 
 import { isAPIError } from "better-auth/api";
 
-import { auth } from "#/lib/auth";
+import { withDatabase } from "#/db";
+import { getAuth } from "#/lib/auth";
 
 function requiredEnv(name: string) {
 	const value = process.env[name];
@@ -20,13 +21,15 @@ async function seedAdmin() {
 	const password = requiredEnv("ADMIN_PASSWORD");
 
 	try {
-		const result = await auth.api.signUpEmail({
-			body: {
-				name,
-				email,
-				password,
-			},
-		});
+		const result = await withDatabase(async () =>
+			getAuth().api.signUpEmail({
+				body: {
+					name,
+					email,
+					password,
+				},
+			}),
+		);
 
 		console.log("✓ Admin user created successfully");
 		console.log(`  Name: ${result.user.name}`);

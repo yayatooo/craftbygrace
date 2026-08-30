@@ -1,11 +1,13 @@
 import { and, asc, desc, eq, ne } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { skills } from "#/db/schema";
 
 import type { CreateSkillInput, UpdateSkillInput } from "./skills.schema";
 
 export async function getSkills() {
+	const db = getDb();
+
 	return db
 		.select({
 			id: skills.id,
@@ -22,6 +24,8 @@ export async function getSkills() {
 }
 
 export async function getSkillBySlugExcludingId(slug: string, id?: string) {
+	const db = getDb();
+
 	const where = id
 		? and(eq(skills.slug, slug), ne(skills.id, id))
 		: eq(skills.slug, slug);
@@ -38,6 +42,8 @@ export async function getSkillBySlugExcludingId(slug: string, id?: string) {
 }
 
 export async function createSkill(data: CreateSkillInput) {
+	const db = getDb();
+
 	const [skill] = await db
 		.insert(skills)
 		.values({
@@ -55,6 +61,8 @@ export async function createSkill(data: CreateSkillInput) {
 }
 
 export async function updateSkill(id: string, data: UpdateSkillInput) {
+	const db = getDb();
+
 	return db.transaction(async (tx) => {
 		const [currentSkill] = await tx
 			.select({
@@ -92,6 +100,8 @@ export async function updateSkill(id: string, data: UpdateSkillInput) {
 }
 
 export async function deleteSkill(id: string) {
+	const db = getDb();
+
 	const [skill] = await db.delete(skills).where(eq(skills.id, id)).returning({
 		id: skills.id,
 		iconKey: skills.iconKey,
@@ -101,6 +111,8 @@ export async function deleteSkill(id: string) {
 }
 
 export async function setSkillActive(id: string, isActive: boolean) {
+	const db = getDb();
+
 	const [skill] = await db
 		.update(skills)
 		.set({

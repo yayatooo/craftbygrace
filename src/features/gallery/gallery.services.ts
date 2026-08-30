@@ -1,11 +1,13 @@
 import { asc, desc, eq } from "drizzle-orm";
 
-import { db } from "#/db";
+import { getDb } from "#/db";
 import { gallery } from "#/db/schema";
 
 import type { GalleryInput } from "./gallery.schema";
 
 export async function getGalleryItems() {
+	const db = getDb();
+
 	return db
 		.select()
 		.from(gallery)
@@ -13,6 +15,8 @@ export async function getGalleryItems() {
 }
 
 export async function createGalleryItem(data: GalleryInput) {
+	const db = getDb();
+
 	const [galleryItem] = await db
 		.insert(gallery)
 		.values({
@@ -28,6 +32,8 @@ export async function createGalleryItem(data: GalleryInput) {
 }
 
 export async function updateGalleryItem(id: string, data: GalleryInput) {
+	const db = getDb();
+
 	const [galleryItem] = await db
 		.update(gallery)
 		.set({
@@ -45,6 +51,8 @@ export async function updateGalleryItem(id: string, data: GalleryInput) {
 }
 
 export async function deleteGalleryItem(id: string) {
+	const db = getDb();
+
 	const [galleryItem] = await db
 		.delete(gallery)
 		.where(eq(gallery.id, id))
@@ -56,6 +64,8 @@ export async function deleteGalleryItem(id: string) {
 }
 
 export async function setGalleryItemActive(id: string, isActive: boolean) {
+	const db = getDb();
+
 	const [galleryItem] = await db
 		.update(gallery)
 		.set({
