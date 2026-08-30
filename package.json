@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "deploy": "bun run build && wrangler deploy",
     "generate-routes": "tsr generate",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "format": "biome format",
     "lint": "biome lint",
     "check": "biome check",

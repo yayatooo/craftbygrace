@@ -1,7 +1,7 @@
 import { TitleText } from "#/components/title-text";
-import { ProfileSettingsForm } from "./components/profile-settings-form";
 import type { ProfileSettings } from "./components/profile-settings-form";
-import { SkillsTable, type SkillItem } from "./components/skills-table";
+import { ProfileSettingsForm } from "./components/profile-settings-form";
+import { type SkillItem, SkillsTable } from "./components/skills-table";
 
 type SettingsAdminProps = {
 	profile: ProfileSettings;

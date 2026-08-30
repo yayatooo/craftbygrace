@@ -1,10 +1,10 @@
-import DashboardAdmin from "#/pages/_platform/dashboard";
 import { createFileRoute } from "@tanstack/react-router";
+import DashboardAdmin from "#/pages/_platform/dashboard";
 
 export const Route = createFileRoute("/(platform)/admin/dashboard")({
-  component: RouteComponent,
+	component: RouteComponent,
 });
 
 function RouteComponent() {
-  return <DashboardAdmin />;
+	return <DashboardAdmin />;
 }

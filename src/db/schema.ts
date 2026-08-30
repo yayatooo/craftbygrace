@@ -1,15 +1,15 @@
 import {
-  boolean,
-  index,
-  integer,
-  jsonb,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  uuid,
-  varchar,
+	boolean,
+	index,
+	integer,
+	jsonb,
+	pgEnum,
+	pgTable,
+	text,
+	timestamp,
+	uniqueIndex,
+	uuid,
+	varchar,
 } from "drizzle-orm/pg-core";
 
 // =============================
@@ -17,51 +17,51 @@ import {
 // =============================
 
 export const jobTypeEnum = pgEnum("job_type", [
-  "full_time",
-  "part_time",
-  "freelance",
-  "contract",
-  "internship",
-  "self_employed",
+	"full_time",
+	"part_time",
+	"freelance",
+	"contract",
+	"internship",
+	"self_employed",
 ]);
 
 export const blogStatusEnum = pgEnum("blog_status", [
-  "draft",
-  "published",
-  "archived",
+	"draft",
+	"published",
+	"archived",
 ]);
 
 export const blogContentTypeEnum = pgEnum("blog_content_type", [
-  "markdown",
-  "mdx",
+	"markdown",
+	"mdx",
 ]);
 
 export const trackerTypeEnum = pgEnum("tracker_type", [
-  "screening",
-  "interview",
-  "rejected",
-  "signoff",
-  "accepted",
-  "draft",
+	"screening",
+	"interview",
+	"rejected",
+	"signoff",
+	"accepted",
+	"draft",
 ]);
 
 export const platformEnum = pgEnum("platform", [
-  "linkeidn",
-  "indeed",
-  "telegram",
-  "jobstreet",
-  "glints",
-  "jobsdb",
-  "facebook",
-  "threads",
-  "twitter/X",
-  "other",
+	"linkeidn",
+	"indeed",
+	"telegram",
+	"jobstreet",
+	"glints",
+	"jobsdb",
+	"facebook",
+	"threads",
+	"twitter/X",
+	"other",
 ]);
 
 export const workTypeEnum = pgEnum("work_type", [
-  "On-site",
-  "Hybrid",
-  "Remote",
+	"On-site",
+	"Hybrid",
+	"Remote",
 ]);
 
 // =============================
@@ -69,144 +69,144 @@ export const workTypeEnum = pgEnum("work_type", [
 // =============================
 
 export const user = pgTable(
-  "user",
-  {
-    id: text("id").primaryKey(),
+	"user",
+	{
+		id: text("id").primaryKey(),
 
-    name: text("name").notNull(),
-    email: text("email").notNull().unique(),
-    emailVerified: boolean("email_verified").default(false).notNull(),
+		name: text("name").notNull(),
+		email: text("email").notNull().unique(),
+		emailVerified: boolean("email_verified").default(false).notNull(),
 
-    image: text("image"),
-    imageKey: text("image_key"),
+		image: text("image"),
+		imageKey: text("image_key"),
 
-    username: varchar("username", { length: 80 }),
-    headline: varchar("headline", { length: 160 }),
-    bio: text("bio"),
+		username: varchar("username", { length: 80 }),
+		headline: varchar("headline", { length: 160 }),
+		bio: text("bio"),
 
-    isOwner: boolean("is_owner").default(false).notNull(),
-    isVerified: boolean("is_verified").default(false).notNull(),
+		isOwner: boolean("is_owner").default(false).notNull(),
+		isVerified: boolean("is_verified").default(false).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
 
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    uniqueIndex("user_username_unique").on(table.username),
-    index("user_owner_idx").on(table.isOwner),
-  ],
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [
+		uniqueIndex("user_username_unique").on(table.username),
+		index("user_owner_idx").on(table.isOwner),
+	],
 );
 
 export const session = pgTable(
-  "session",
-  {
-    id: text("id").primaryKey(),
+	"session",
+	{
+		id: text("id").primaryKey(),
 
-    expiresAt: timestamp("expires_at", {
-      withTimezone: true,
-    }).notNull(),
+		expiresAt: timestamp("expires_at", {
+			withTimezone: true,
+		}).notNull(),
 
-    token: text("token").notNull().unique(),
+		token: text("token").notNull().unique(),
 
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
+		createdAt: timestamp("created_at", {
+			withTimezone: true,
+		})
+			.defaultNow()
+			.notNull(),
 
-    updatedAt: timestamp("updated_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
+		updatedAt: timestamp("updated_at", {
+			withTimezone: true,
+		})
+			.defaultNow()
+			.notNull(),
 
-    ipAddress: text("ip_address"),
-    userAgent: text("user_agent"),
+		ipAddress: text("ip_address"),
+		userAgent: text("user_agent"),
 
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-  },
-  (table) => [index("session_user_id_idx").on(table.userId)],
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
+	},
+	(table) => [index("session_user_id_idx").on(table.userId)],
 );
 
 export const account = pgTable(
-  "account",
-  {
-    id: text("id").primaryKey(),
+	"account",
+	{
+		id: text("id").primaryKey(),
 
-    accountId: text("account_id").notNull(),
-    providerId: text("provider_id").notNull(),
+		accountId: text("account_id").notNull(),
+		providerId: text("provider_id").notNull(),
 
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+		userId: text("user_id")
+			.notNull()
+			.references(() => user.id, { onDelete: "cascade" }),
 
-    accessToken: text("access_token"),
-    refreshToken: text("refresh_token"),
-    idToken: text("id_token"),
+		accessToken: text("access_token"),
+		refreshToken: text("refresh_token"),
+		idToken: text("id_token"),
 
-    accessTokenExpiresAt: timestamp("access_token_expires_at", {
-      withTimezone: true,
-    }),
+		accessTokenExpiresAt: timestamp("access_token_expires_at", {
+			withTimezone: true,
+		}),
 
-    refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
-      withTimezone: true,
-    }),
+		refreshTokenExpiresAt: timestamp("refresh_token_expires_at", {
+			withTimezone: true,
+		}),
 
-    scope: text("scope"),
-    password: text("password"),
+		scope: text("scope"),
+		password: text("password"),
 
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
+		createdAt: timestamp("created_at", {
+			withTimezone: true,
+		})
+			.defaultNow()
+			.notNull(),
 
-    updatedAt: timestamp("updated_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    index("account_user_id_idx").on(table.userId),
-    uniqueIndex("account_provider_account_unique").on(
-      table.providerId,
-      table.accountId,
-    ),
-  ],
+		updatedAt: timestamp("updated_at", {
+			withTimezone: true,
+		})
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [
+		index("account_user_id_idx").on(table.userId),
+		uniqueIndex("account_provider_account_unique").on(
+			table.providerId,
+			table.accountId,
+		),
+	],
 );
 
 export const verification = pgTable(
-  "verification",
-  {
-    id: text("id").primaryKey(),
+	"verification",
+	{
+		id: text("id").primaryKey(),
 
-    identifier: text("identifier").notNull(),
-    value: text("value").notNull(),
+		identifier: text("identifier").notNull(),
+		value: text("value").notNull(),
 
-    expiresAt: timestamp("expires_at", {
-      withTimezone: true,
-    }).notNull(),
+		expiresAt: timestamp("expires_at", {
+			withTimezone: true,
+		}).notNull(),
 
-    createdAt: timestamp("created_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
+		createdAt: timestamp("created_at", {
+			withTimezone: true,
+		})
+			.defaultNow()
+			.notNull(),
 
-    updatedAt: timestamp("updated_at", {
-      withTimezone: true,
-    })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [index("verification_identifier_idx").on(table.identifier)],
+		updatedAt: timestamp("updated_at", {
+			withTimezone: true,
+		})
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [index("verification_identifier_idx").on(table.identifier)],
 );
 
 // =============================
@@ -214,33 +214,33 @@ export const verification = pgTable(
 // =============================
 
 export const skills = pgTable(
-  "skills",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"skills",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    name: varchar("name", { length: 100 }).notNull(),
-    slug: varchar("slug", { length: 120 }).notNull(),
+		name: varchar("name", { length: 100 }).notNull(),
+		slug: varchar("slug", { length: 120 }).notNull(),
 
-    icon: text("icon").notNull(),
-    iconKey: text("icon_key"),
+		icon: text("icon").notNull(),
+		iconKey: text("icon_key"),
 
-    isActive: boolean("is_active").default(true).notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
 
-    order: integer("order").default(0).notNull(),
+		order: integer("order").default(0).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
 
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    uniqueIndex("skills_slug_unique").on(table.slug),
-    index("skills_active_idx").on(table.isActive),
-    index("skills_order_idx").on(table.order),
-  ],
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [
+		uniqueIndex("skills_slug_unique").on(table.slug),
+		index("skills_active_idx").on(table.isActive),
+		index("skills_order_idx").on(table.order),
+	],
 );
 
 // =============================
@@ -248,41 +248,41 @@ export const skills = pgTable(
 // =============================
 
 export const projects = pgTable(
-  "projects",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"projects",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    thumbnail: text("thumbnail"),
-    name: varchar("name", { length: 160 }).notNull(),
-    slug: varchar("slug", { length: 180 }).notNull(),
+		thumbnail: text("thumbnail"),
+		name: varchar("name", { length: 160 }).notNull(),
+		slug: varchar("slug", { length: 180 }).notNull(),
 
-    description: text("description").notNull(),
+		description: text("description").notNull(),
 
-    // ["Next.js", "Drizzle", "PostgreSQL", "Tailwind"]
-    techStack: jsonb("tech_stack").$type<string[]>().default([]).notNull(),
+		// ["Next.js", "Drizzle", "PostgreSQL", "Tailwind"]
+		techStack: jsonb("tech_stack").$type<string[]>().default([]).notNull(),
 
-    isCurrent: boolean("is_current").default(false).notNull(),
-    isSecret: boolean("is_secret").default(false).notNull(),
-    isActive: boolean("is_active").default(true).notNull(),
+		isCurrent: boolean("is_current").default(false).notNull(),
+		isSecret: boolean("is_secret").default(false).notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
 
-    demoLink: text("demo_link"),
-    repoLink: text("repo_link"),
+		demoLink: text("demo_link"),
+		repoLink: text("repo_link"),
 
-    // Supaya bisa urut manual di dashboard
-    order: integer("order").default(0).notNull(),
+		// Supaya bisa urut manual di dashboard
+		order: integer("order").default(0).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    uniqueIndex("projects_slug_unique").on(table.slug),
-    index("projects_active_idx").on(table.isActive),
-    index("projects_current_idx").on(table.isCurrent),
-  ],
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [
+		uniqueIndex("projects_slug_unique").on(table.slug),
+		index("projects_active_idx").on(table.isActive),
+		index("projects_current_idx").on(table.isCurrent),
+	],
 );
 
 // =============================
@@ -290,36 +290,36 @@ export const projects = pgTable(
 // =============================
 
 export const experiences = pgTable(
-  "experiences",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"experiences",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    companyName: varchar("company_name", { length: 160 }).notNull(),
-    role: varchar("role", { length: 160 }).notNull(),
-    companyLogo: varchar("company_logo"),
+		companyName: varchar("company_name", { length: 160 }).notNull(),
+		role: varchar("role", { length: 160 }).notNull(),
+		companyLogo: varchar("company_logo"),
 
-    startDate: timestamp("start_date", { withTimezone: true }).notNull(),
-    endDate: timestamp("end_date", { withTimezone: true }),
+		startDate: timestamp("start_date", { withTimezone: true }).notNull(),
+		endDate: timestamp("end_date", { withTimezone: true }),
 
-    isCurrent: boolean("is_current").default(false).notNull(),
+		isCurrent: boolean("is_current").default(false).notNull(),
 
-    typeJob: jobTypeEnum("type_job").notNull(),
+		typeJob: jobTypeEnum("type_job").notNull(),
 
-    location: varchar("location", { length: 160 }),
+		location: varchar("location", { length: 160 }),
 
-    order: integer("order").default(0).notNull(),
+		order: integer("order").default(0).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    index("experiences_current_idx").on(table.isCurrent),
-    index("experiences_start_date_idx").on(table.startDate),
-  ],
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [
+		index("experiences_current_idx").on(table.isCurrent),
+		index("experiences_start_date_idx").on(table.startDate),
+	],
 );
 
 // =============================
@@ -327,26 +327,26 @@ export const experiences = pgTable(
 // =============================
 
 export const songs = pgTable(
-  "songs",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"songs",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    name: varchar("name", { length: 160 }).notNull(),
-    writer: varchar("writer", { length: 160 }).notNull(),
-    image: text("image"),
-    link: text("link").notNull(),
+		name: varchar("name", { length: 160 }).notNull(),
+		writer: varchar("writer", { length: 160 }).notNull(),
+		image: text("image"),
+		link: text("link").notNull(),
 
-    isActive: boolean("is_active").default(true).notNull(),
-    order: integer("order").default(0).notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
+		order: integer("order").default(0).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [index("songs_active_idx").on(table.isActive)],
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [index("songs_active_idx").on(table.isActive)],
 );
 
 // =============================
@@ -354,26 +354,26 @@ export const songs = pgTable(
 // =============================
 
 export const movies = pgTable(
-  "movies",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"movies",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    name: varchar("name", { length: 160 }).notNull(),
-    type: varchar("type", { length: 160 }).notNull(),
-    image: text("image"),
-    link: text("link"),
+		name: varchar("name", { length: 160 }).notNull(),
+		type: varchar("type", { length: 160 }).notNull(),
+		image: text("image"),
+		link: text("link"),
 
-    isActive: boolean("is_active").default(true).notNull(),
-    order: integer("order").default(0).notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
+		order: integer("order").default(0).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [index("movies_active_idx").on(table.isActive)],
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [index("movies_active_idx").on(table.isActive)],
 );
 
 // =============================
@@ -381,27 +381,27 @@ export const movies = pgTable(
 // =============================
 
 export const gallery = pgTable(
-  "gallery",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"gallery",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    name: varchar("name", { length: 160 }).notNull(),
-    image: text("image").notNull(),
+		name: varchar("name", { length: 160 }).notNull(),
+		image: text("image").notNull(),
 
-    // Optional untuk accessibility dan SEO
-    alt: varchar("alt", { length: 255 }),
+		// Optional untuk accessibility dan SEO
+		alt: varchar("alt", { length: 255 }),
 
-    isActive: boolean("is_active").default(true).notNull(),
-    order: integer("order").default(0).notNull(),
+		isActive: boolean("is_active").default(true).notNull(),
+		order: integer("order").default(0).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [index("gallery_active_idx").on(table.isActive)],
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [index("gallery_active_idx").on(table.isActive)],
 );
 
 // =============================
@@ -409,24 +409,24 @@ export const gallery = pgTable(
 // =============================
 
 export const jobTracker = pgTable("job_tracker", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  name: varchar("name", { length: 160 }).notNull(),
-  company: varchar("company", { length: 160 }).notNull(),
-  location: varchar("location", { length: 160 }).notNull(),
-  role: varchar("role", { length: 160 }).notNull(),
-  cv: varchar("cv"),
-  type: jobTypeEnum("type").notNull(),
-  platform: platformEnum("platform").notNull(),
-  workType: workTypeEnum("work_type").notNull(),
-  status: trackerTypeEnum("status").default("screening"),
-  remarks: text("remarks"),
+	id: uuid("id").defaultRandom().primaryKey(),
+	name: varchar("name", { length: 160 }).notNull(),
+	company: varchar("company", { length: 160 }).notNull(),
+	location: varchar("location", { length: 160 }).notNull(),
+	role: varchar("role", { length: 160 }).notNull(),
+	cv: varchar("cv"),
+	type: jobTypeEnum("type").notNull(),
+	platform: platformEnum("platform").notNull(),
+	workType: workTypeEnum("work_type").notNull(),
+	status: trackerTypeEnum("status").default("screening"),
+	remarks: text("remarks"),
 
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .defaultNow()
-    .notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true })
+		.defaultNow()
+		.notNull(),
+	updatedAt: timestamp("updated_at", { withTimezone: true })
+		.defaultNow()
+		.notNull(),
 });
 
 // =============================
@@ -434,46 +434,46 @@ export const jobTracker = pgTable("job_tracker", {
 // =============================
 
 export const blogs = pgTable(
-  "blogs",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
+	"blogs",
+	{
+		id: uuid("id").defaultRandom().primaryKey(),
 
-    title: varchar("title", { length: 200 }).notNull(),
-    slug: varchar("slug", { length: 220 }).notNull(),
+		title: varchar("title", { length: 200 }).notNull(),
+		slug: varchar("slug", { length: 220 }).notNull(),
 
-    excerpt: text("excerpt"),
-    coverImage: text("cover_image"),
+		excerpt: text("excerpt"),
+		coverImage: text("cover_image"),
 
-    // Bisa markdown dulu, lalu nanti mdx.
-    contentType: blogContentTypeEnum("content_type")
-      .default("markdown")
-      .notNull(),
+		// Bisa markdown dulu, lalu nanti mdx.
+		contentType: blogContentTypeEnum("content_type")
+			.default("markdown")
+			.notNull(),
 
-    // Isi markdown / mdx disimpan di sini.
-    content: text("content").notNull(),
+		// Isi markdown / mdx disimpan di sini.
+		content: text("content").notNull(),
 
-    status: blogStatusEnum("status").default("draft").notNull(),
+		status: blogStatusEnum("status").default("draft").notNull(),
 
-    // Untuk tag seperti ["Odoo", "React", "Drizzle"]
-    tags: jsonb("tags").$type<string[]>().default([]).notNull(),
+		// Untuk tag seperti ["Odoo", "React", "Drizzle"]
+		tags: jsonb("tags").$type<string[]>().default([]).notNull(),
 
-    readingTime: integer("reading_time"),
+		readingTime: integer("reading_time"),
 
-    publishedAt: timestamp("published_at", { withTimezone: true }),
+		publishedAt: timestamp("published_at", { withTimezone: true }),
 
-    isFeatured: boolean("is_featured").default(false).notNull(),
+		isFeatured: boolean("is_featured").default(false).notNull(),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
-  },
-  (table) => [
-    uniqueIndex("blogs_slug_unique").on(table.slug),
-    index("blogs_status_idx").on(table.status),
-    index("blogs_featured_idx").on(table.isFeatured),
-    index("blogs_published_at_idx").on(table.publishedAt),
-  ],
+		createdAt: timestamp("created_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+		updatedAt: timestamp("updated_at", { withTimezone: true })
+			.defaultNow()
+			.notNull(),
+	},
+	(table) => [
+		uniqueIndex("blogs_slug_unique").on(table.slug),
+		index("blogs_status_idx").on(table.status),
+		index("blogs_featured_idx").on(table.isFeatured),
+		index("blogs_published_at_idx").on(table.publishedAt),
+	],
 );
