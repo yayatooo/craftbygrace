@@ -101,7 +101,7 @@ export function AboutSection({ data }: AboutSectionProps) {
 									fetchPriority={index === 0 ? "high" : "auto"}
 									decoding="async"
 								/>
-								<figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2 pt-8 text-xs font-medium text-white">
+								<figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent px-3 pb-2 pt-8 text-xs font-medium text-white">
 									{item.name}
 								</figcaption>
 							</figure>
