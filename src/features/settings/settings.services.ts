@@ -39,6 +39,7 @@ export async function getPublicProfile() {
 			name: user.name,
 			headline: user.headline,
 			image: user.image,
+			isVerified: user.isVerified,
 		})
 		.from(user)
 		.where(eq(user.email, adminEmail))
